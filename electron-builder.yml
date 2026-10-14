@@ -1,0 +1,24 @@
+appId: com.rootdesk.app
+productName: RootDesk
+directories:
+  buildResources: build
+  output: release
+files:
+  - out/**
+  - package.json
+extraResources:
+  - from: resources/seed-content
+    to: seed-content
+    filter:
+      - "**/*"
+mac:
+  target:
+    - dmg
+    - zip
+win:
+  target:
+    - nsis
+    - portable
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true

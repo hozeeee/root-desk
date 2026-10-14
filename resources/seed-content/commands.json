@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "generatedAt": "2026-10-14T00:00:00Z",
+  "commands": [
+    {
+      "id": "adb-devices",
+      "name": "列出 adb 设备",
+      "template": "adb devices",
+      "risk": "low",
+      "deviceModes": [
+        "android",
+        "recovery"
+      ],
+      "description": "确认 adb 连接与授权状态；出现 unauthorized 时只在设备屏幕上授权。",
+      "parameters": [],
+      "expertMode": false
+    },
+    {
+      "id": "adb-get-product",
+      "name": "读取设备代号",
+      "template": "adb shell getprop ro.product.device",
+      "risk": "low",
+      "deviceModes": [
+        "android"
+      ],
+      "description": "读取系统报告的设备代号，不修改设备。",
+      "parameters": [],
+      "expertMode": false
+    },
+    {
+      "id": "adb-get-fingerprint",
+      "name": "读取构建指纹",
+      "template": "adb shell getprop ro.build.fingerprint",
+      "risk": "low",
+      "deviceModes": [
+        "android"
+      ],
+      "description": "记录当前完整构建指纹，用于匹配固件。",
+      "parameters": [],
+      "expertMode": false
+    },
+    {
+      "id": "adb-reboot-bootloader",
+      "name": "重启到 bootloader",
+      "template": "adb reboot bootloader",
+      "risk": "medium",
+      "deviceModes": [
+        "android"
+      ],
+      "description": "要求目标序列号已核对；只重启，不解锁。",
+      "parameters": [],
+      "expertMode": false
+    },
+    {
+      "id": "fastboot-devices",
+      "name": "列出 fastboot 设备",
+      "template": "fastboot devices",
+      "risk": "low",
+      "deviceModes": [
+        "bootloader",
+        "fastbootd"
+      ],
+      "description": "确认 fastboot 通信。多设备连接时先断开非目标设备。",
+      "parameters": [],
+      "expertMode": false
+    },
+    {
+      "id": "fastboot-get-product",
+      "name": "读取 fastboot 产品代号",
+      "template": "fastboot getvar product",
+      "risk": "low",
+      "deviceModes": [
+        "bootloader",
+        "fastbootd"
+      ],
+      "description": "读取 bootloader 报告的 product。",
+      "parameters": [],
+      "expertMode": false
+    },
+    {
+      "id": "fastboot-get-slot",
+      "name": "读取当前槽位",
+      "template": "fastboot getvar current-slot",
+      "risk": "low",
+      "deviceModes": [
+        "bootloader",
+        "fastbootd"
+      ],
+      "description": "查询 A/B 当前槽位；非 A/B 设备可能返回空或错误。",
+      "parameters": [],
+      "expertMode": false
+    },
+    {
+      "id": "fastboot-get-unlocked",
+      "name": "读取解锁状态",
+      "template": "fastboot getvar unlocked",
+      "risk": "low",
+      "deviceModes": [
+        "bootloader"
+      ],
+      "description": "查询解锁状态；不同 OEM 返回格式不同。",
+      "parameters": [],
+      "expertMode": false
+    },
+    {
+      "id": "fastboot-reboot",
+      "name": "重启设备",
+      "template": "fastboot reboot",
+      "risk": "medium",
+      "deviceModes": [
+        "bootloader",
+        "fastbootd"
+      ],
+      "description": "退出 fastboot 并重启。",
+      "parameters": [],
+      "expertMode": false
+    },
+    {
+      "id": "fastboot-unlock",
+      "name": "请求官方 fastboot 解锁",
+      "template": "fastboot flashing unlock",
+      "risk": "critical",
+      "deviceModes": [
+        "bootloader"
+      ],
+      "description": "仅适用于 OEM 明确支持的设备；需设备端确认并清除全部用户数据。不得用于绕过账号锁、FRP、MDM 或运营商限制。",
+      "parameters": [],
+      "expertMode": true
+    },
+    {
+      "id": "fastboot-boot-image",
+      "name": "临时启动镜像",
+      "template": "fastboot boot {imagePath}",
+      "risk": "high",
+      "deviceModes": [
+        "bootloader"
+      ],
+      "description": "仅在该设备明确支持临时启动且镜像与构建/架构完全匹配时使用。某些设备不支持。",
+      "parameters": [
+        {
+          "name": "imagePath",
+          "type": "file",
+          "required": true,
+          "description": "本机镜像绝对路径；必须先核对来源、构建和 SHA-256。"
+        }
+      ],
+      "expertMode": true
+    },
+    {
+      "id": "fastboot-flash-boot",
+      "name": "刷写 boot 分区",
+      "template": "fastboot flash boot {imagePath}",
+      "risk": "critical",
+      "deviceModes": [
+        "bootloader"
+      ],
+      "description": "会改写启动分区；不得假定 boot 是正确目标，先核对设备专用流程与分区布局。",
+      "parameters": [
+        {
+          "name": "imagePath",
+          "type": "file",
+          "required": true,
+          "description": "与精确设备构建匹配的 boot.img 路径。"
+        }
+      ],
+      "expertMode": true
+    },
+    {
+      "id": "fastboot-flash-init-boot",
+      "name": "刷写 init_boot 分区",
+      "template": "fastboot flash init_boot {imagePath}",
+      "risk": "critical",
+      "deviceModes": [
+        "bootloader"
+      ],
+      "description": "仅适用于确有 init_boot 分区且设备专用流程要求它的机型。",
+      "parameters": [
+        {
+          "name": "imagePath",
+          "type": "file",
+          "required": true,
+          "description": "与精确设备构建匹配的 init_boot.img 路径。"
+        }
+      ],
+      "expertMode": true
+    },
+    {
+      "id": "fastboot-flash-partition-slot",
+      "name": "刷写指定槽位分区",
+      "template": "fastboot flash {partition}_{slot} {imagePath}",
+      "risk": "critical",
+      "deviceModes": [
+        "bootloader"
+      ],
+      "description": "专家模板；错误的分区/槽位/镜像可导致无法启动。不得盲目复制。",
+      "parameters": [
+        {
+          "name": "partition",
+          "type": "enum",
+          "required": true,
+          "allowedValues": [
+            "boot",
+            "init_boot"
+          ],
+          "description": "经设备专用资料确认的分区。"
+        },
+        {
+          "name": "slot",
+          "type": "enum",
+          "required": true,
+          "allowedValues": [
+            "a",
+            "b"
+          ],
+          "description": "经 fastboot 查询并由恢复计划确认的槽位。"
+        },
+        {
+          "name": "imagePath",
+          "type": "file",
+          "required": true,
+          "description": "已核验的匹配镜像绝对路径。"
+        }
+      ],
+      "expertMode": true
+    },
+    {
+      "id": "fastboot-lock",
+      "name": "请求重新锁定",
+      "template": "fastboot flashing lock",
+      "risk": "critical",
+      "deviceModes": [
+        "bootloader"
+      ],
+      "description": "只有设备已恢复完整、匹配且可启动的原厂分区时才可考虑；非原厂状态下锁定可能永久变砖并再次清除数据。",
+      "parameters": [],
+      "expertMode": true
+    },
+    {
+      "id": "adb-version", "name": "查询 ADB 版本", "template": "adb version",
+      "risk": "low", "deviceModes": [], "description": "读取当前桌面 ADB 工具版本，不连接手机。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "adb-get-state", "name": "查询设备连接状态", "template": "adb get-state",
+      "risk": "low", "deviceModes": ["android", "recovery"], "description": "确认所选设备的授权与连接状态。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "adb-get-serial", "name": "查询设备序列号", "template": "adb get-serialno",
+      "risk": "low", "deviceModes": ["android", "recovery"], "description": "读取所选设备序列号，与机身和操作记录交叉核对。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "adb-list-properties", "name": "读取全部系统属性", "template": "adb shell getprop",
+      "risk": "low", "deviceModes": ["android"], "description": "只读系统属性可能包含序列号、构建和网络信息，分享日志前请脱敏。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "adb-list-packages", "name": "列出已安装应用", "template": "adb shell pm list packages",
+      "risk": "low", "deviceModes": ["android"], "description": "只读取包名，不卸载或更改应用。应用列表可能暴露个人使用信息。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "adb-list-user-packages", "name": "列出第三方应用", "template": "adb shell pm list packages -3",
+      "risk": "low", "deviceModes": ["android"], "description": "只列出用户安装的应用包名。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "adb-user-id", "name": "查询 shell 用户身份", "template": "adb shell id",
+      "risk": "low", "deviceModes": ["android", "recovery"], "description": "确认 ADB shell 当前用户身份；该命令不会请求 su 或提权。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "adb-kernel", "name": "查询内核版本", "template": "adb shell uname -a",
+      "risk": "low", "deviceModes": ["android", "recovery"], "description": "只读取内核版本和架构信息。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "adb-battery", "name": "查看电池状态", "template": "adb shell dumpsys battery",
+      "risk": "low", "deviceModes": ["android"], "description": "只读取电量、充电与温度；不提供 set/reset 等修改参数。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "adb-logcat-snapshot", "name": "读取一次日志快照", "template": "adb logcat -d -t 300",
+      "risk": "low", "deviceModes": ["android"], "description": "读取最近 300 行日志后退出，可能包含个人信息，禁止直接公开原始日志。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "adb-reboot", "name": "重启到 Android", "template": "adb reboot",
+      "risk": "medium", "deviceModes": ["android", "recovery"], "description": "会中断所选设备当前工作，保存数据后逐次确认。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "fastboot-version", "name": "查询 Fastboot 版本", "template": "fastboot --version",
+      "risk": "low", "deviceModes": [], "description": "读取桌面 Fastboot 工具版本，不操作手机。", "parameters": [], "expertMode": false
+    },
+    {
+      "id": "fastboot-is-userspace", "name": "查询 Fastboot 模式", "template": "fastboot getvar is-userspace",
+      "risk": "low", "deviceModes": ["bootloader", "fastbootd"], "description": "判断所选设备是否处于 fastbootd 用户空间模式，不变更分区。", "parameters": [], "expertMode": false
+    }
+  ]
+}

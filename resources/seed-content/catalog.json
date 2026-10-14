@@ -1,0 +1,3594 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "generatedAt": "2026-10-14T00:00:00Z",
+  "brands": [
+    {
+      "id": "google-pixel",
+      "name": "Google Pixel",
+      "summary": "Google 自有 Android 设备；仅 OEM 解锁开关可用且非运营商限制的型号适用。",
+      "devices": [
+        {
+          "id": "pixel-6",
+          "name": "Pixel 6",
+          "codenames": [
+            "oriole"
+          ],
+          "variants": [
+            "GB7N6",
+            "G9S9B",
+            "GLU0G"
+          ],
+          "androidVersions": [
+            "Android 12（出厂）",
+            "Android 13",
+            "Android 14",
+            "Android 15"
+          ],
+          "soc": "Google Tensor",
+          "bootloader": {
+            "availability": "official",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "Magisk 修补与当前固件完全匹配的 boot.img",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Pixel 6 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "google-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Google Pixel factory images",
+              "url": "https://developers.google.com/android/images",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。运营商销售版本可能禁用 OEM 解锁；该限制不得绕过。重新锁定前必须恢复完全原厂且可正常启动的镜像。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "pixel-7",
+          "name": "Pixel 7",
+          "codenames": [
+            "panther"
+          ],
+          "variants": [
+            "GVU6C",
+            "GQML3"
+          ],
+          "androidVersions": [
+            "Android 13（出厂）",
+            "Android 14",
+            "Android 15"
+          ],
+          "soc": "Google Tensor G2",
+          "bootloader": {
+            "availability": "official",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "Magisk 修补与当前固件完全匹配的 init_boot.img",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Pixel 7 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 init_boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "google-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Google Pixel factory images",
+              "url": "https://developers.google.com/android/images",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。运营商销售版本可能禁用 OEM 解锁；该限制不得绕过。重新锁定前必须恢复完全原厂且可正常启动的镜像。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "pixel-8",
+          "name": "Pixel 8",
+          "codenames": [
+            "shiba"
+          ],
+          "variants": [
+            "G9BQD",
+            "GKWS6"
+          ],
+          "androidVersions": [
+            "Android 14（出厂）",
+            "Android 15"
+          ],
+          "soc": "Google Tensor G3",
+          "bootloader": {
+            "availability": "official",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "Magisk 修补与当前固件完全匹配的 init_boot.img",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Pixel 8 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 init_boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "google-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Google Pixel factory images",
+              "url": "https://developers.google.com/android/images",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。运营商销售版本可能禁用 OEM 解锁；该限制不得绕过。重新锁定前必须恢复完全原厂且可正常启动的镜像。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "pixel-9",
+          "name": "Pixel 9",
+          "codenames": [
+            "tokay"
+          ],
+          "variants": [
+            "GUR25"
+          ],
+          "androidVersions": [
+            "Android 14（出厂）",
+            "Android 15"
+          ],
+          "soc": "Google Tensor G4",
+          "bootloader": {
+            "availability": "official",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "Magisk 修补与当前固件完全匹配的 init_boot.img",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Pixel 9 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 init_boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "google-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Google Pixel factory images",
+              "url": "https://developers.google.com/android/images",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。运营商销售版本可能禁用 OEM 解锁；该限制不得绕过。重新锁定前必须恢复完全原厂且可正常启动的镜像。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "pixel-9-pro-xl",
+          "name": "Pixel 9 Pro XL",
+          "codenames": [
+            "komodo"
+          ],
+          "variants": [
+            "GGX8B",
+            "GZC4K"
+          ],
+          "androidVersions": [
+            "Android 14（出厂）",
+            "Android 15"
+          ],
+          "soc": "Google Tensor G4",
+          "bootloader": {
+            "availability": "official",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "Magisk 修补与当前固件完全匹配的 init_boot.img",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Pixel 9 Pro XL 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 init_boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "google-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Google Pixel factory images",
+              "url": "https://developers.google.com/android/images",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。运营商销售版本可能禁用 OEM 解锁；该限制不得绕过。重新锁定前必须恢复完全原厂且可正常启动的镜像。Android版本是已收录样例，不代表最新支持范围。"
+        }
+      ]
+    },
+    {
+      "id": "xiaomi",
+      "name": "Xiaomi",
+      "summary": "小米数字系列；官方解锁资格、等待期与区域政策可能变化，禁止规避账号校验。",
+      "devices": [
+        {
+          "id": "xiaomi-12",
+          "name": "Xiaomi 12",
+          "codenames": [
+            "cupid"
+          ],
+          "variants": [
+            "2201123G",
+            "2201123C"
+          ],
+          "androidVersions": [
+            "Android 12（出厂）",
+            "Android 13",
+            "Android 14"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Gen 1",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "官方解锁后用 Magisk 修补匹配固件的 boot.img",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Xiaomi 12 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "按 Xiaomi 官方流程绑定设备与账号并满足等待/资格要求；不使用付费绕过、账户注入或非官方授权服务。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "按官方 Mi Unlock 资格、账号绑定和客户端流程解锁",
+              "description": "先按 Xiaomi 官方门户核对精确型号、地区与当前 MIUI/HyperOS 政策并完成所需资格申请；在设备的官方解锁设置中绑定本人账号与设备，满足官方等待期。仅下载官方 Windows Mi Unlock 客户端，登录同一账号后按官方说明连接设备并确认解锁；解锁会清除数据。客户端或政策拒绝时立即停止，不允许免等待、免账号、第三方授权或其他绕过；不能用通用 fastboot 解锁命令代替此流程。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "xiaomi-unlock",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "Xiaomi Bootloader Unlock official portal",
+              "url": "https://en.miui.com/unlock/index.html",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Android Verified Boot documentation",
+              "url": "https://source.android.com/docs/security/features/verifiedboot",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。官方账号绑定、资格和等待期不得绕过；HyperOS/MIUI 的反回滚与地区差异必须逐构建确认。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "xiaomi-13",
+          "name": "Xiaomi 13",
+          "codenames": [
+            "fuxi"
+          ],
+          "variants": [
+            "2211133G",
+            "2211133C"
+          ],
+          "androidVersions": [
+            "Android 13（出厂）",
+            "Android 14",
+            "Android 15"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Gen 2",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Xiaomi 13 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "按 Xiaomi 官方流程绑定设备与账号并满足等待/资格要求；不使用付费绕过、账户注入或非官方授权服务。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "按官方 Mi Unlock 资格、账号绑定和客户端流程解锁",
+              "description": "先按 Xiaomi 官方门户核对精确型号、地区与当前 MIUI/HyperOS 政策并完成所需资格申请；在设备的官方解锁设置中绑定本人账号与设备，满足官方等待期。仅下载官方 Windows Mi Unlock 客户端，登录同一账号后按官方说明连接设备并确认解锁；解锁会清除数据。客户端或政策拒绝时立即停止，不允许免等待、免账号、第三方授权或其他绕过；不能用通用 fastboot 解锁命令代替此流程。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "xiaomi-unlock",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "Xiaomi Bootloader Unlock official portal",
+              "url": "https://en.miui.com/unlock/index.html",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Android Verified Boot documentation",
+              "url": "https://source.android.com/docs/security/features/verifiedboot",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。官方账号绑定、资格和等待期不得绕过；HyperOS/MIUI 的反回滚与地区差异必须逐构建确认。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "xiaomi-14",
+          "name": "Xiaomi 14",
+          "codenames": [
+            "houji"
+          ],
+          "variants": [
+            "23127PN0CG",
+            "23127PN0CC"
+          ],
+          "androidVersions": [
+            "Android 14（出厂）",
+            "Android 15"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Gen 3",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Xiaomi 14 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "按 Xiaomi 官方流程绑定设备与账号并满足等待/资格要求；不使用付费绕过、账户注入或非官方授权服务。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "按官方 Mi Unlock 资格、账号绑定和客户端流程解锁",
+              "description": "先按 Xiaomi 官方门户核对精确型号、地区与当前 MIUI/HyperOS 政策并完成所需资格申请；在设备的官方解锁设置中绑定本人账号与设备，满足官方等待期。仅下载官方 Windows Mi Unlock 客户端，登录同一账号后按官方说明连接设备并确认解锁；解锁会清除数据。客户端或政策拒绝时立即停止，不允许免等待、免账号、第三方授权或其他绕过；不能用通用 fastboot 解锁命令代替此流程。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "xiaomi-unlock",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "Xiaomi Bootloader Unlock official portal",
+              "url": "https://en.miui.com/unlock/index.html",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Android Verified Boot documentation",
+              "url": "https://source.android.com/docs/security/features/verifiedboot",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。官方账号绑定、资格和等待期不得绕过；HyperOS/MIUI 的反回滚与地区差异必须逐构建确认。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "xiaomi-15",
+          "name": "Xiaomi 15",
+          "codenames": [
+            "dada"
+          ],
+          "variants": [
+            "24129PN74G",
+            "24129PN74C"
+          ],
+          "androidVersions": [
+            "Android 15（出厂）"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Elite",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Xiaomi 15 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "按 Xiaomi 官方流程绑定设备与账号并满足等待/资格要求；不使用付费绕过、账户注入或非官方授权服务。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "按官方 Mi Unlock 资格、账号绑定和客户端流程解锁",
+              "description": "先按 Xiaomi 官方门户核对精确型号、地区与当前 MIUI/HyperOS 政策并完成所需资格申请；在设备的官方解锁设置中绑定本人账号与设备，满足官方等待期。仅下载官方 Windows Mi Unlock 客户端，登录同一账号后按官方说明连接设备并确认解锁；解锁会清除数据。客户端或政策拒绝时立即停止，不允许免等待、免账号、第三方授权或其他绕过；不能用通用 fastboot 解锁命令代替此流程。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "xiaomi-unlock",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "Xiaomi Bootloader Unlock official portal",
+              "url": "https://en.miui.com/unlock/index.html",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Android Verified Boot documentation",
+              "url": "https://source.android.com/docs/security/features/verifiedboot",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。官方账号绑定、资格和等待期不得绕过；HyperOS/MIUI 的反回滚与地区差异必须逐构建确认。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        }
+      ]
+    },
+    {
+      "id": "redmi",
+      "name": "Redmi",
+      "summary": "Redmi 主流机型；同名 4G/5G 与地区版本常为不同硬件，必须按型号与代号识别。",
+      "devices": [
+        {
+          "id": "redmi-note-10-pro",
+          "name": "Redmi Note 10 Pro / Pro Max（全球与印度变体）",
+          "codenames": [
+            "sweet",
+            "sweetin"
+          ],
+          "variants": [
+            "M2101K6G（全球 Redmi Note 10 Pro；sweet；不允许与印度版互刷）",
+            "M2101K6P（印度 Redmi Note 10 Pro；sweetin；不允许与全球版或 Pro Max 互刷）",
+            "M2101K6I（印度 Redmi Note 10 Pro Max；sweetin；不允许与全球版或印度 Pro 互刷）"
+          ],
+          "androidVersions": [
+            "Android 11（出厂）",
+            "Android 12",
+            "Android 13"
+          ],
+          "soc": "Qualcomm Snapdragon 732G",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "官方解锁后以匹配 ROM 的 boot.img 进行 Magisk 修补",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置、机身型号标识及引导加载程序交叉确认全球 Pro（M2101K6G/sweet）、印度 Pro（M2101K6P/sweetin）或印度 Pro Max（M2101K6I/sweetin）及当前构建；不允许三者互刷。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "按 Xiaomi 官方流程绑定设备与账号并满足等待/资格要求；不使用付费绕过、账户注入或非官方授权服务。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "本条目合并展示全球 Redmi Note 10 Pro（M2101K6G/sweet）、印度 Redmi Note 10 Pro（M2101K6P/sweetin）和印度 Pro Max（M2101K6I/sweetin）。必须分别核对设备型号、地区和当前构建及对应原厂包；不允许全球/印度或 Pro/Pro Max 互刷，即使代号相同也不代表兼容。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "按官方 Mi Unlock 资格、账号绑定和客户端流程解锁",
+              "description": "先按 Xiaomi 官方门户核对精确型号、地区与当前 MIUI/HyperOS 政策并完成所需资格申请；在设备的官方解锁设置中绑定本人账号与设备，满足官方等待期。仅下载官方 Windows Mi Unlock 客户端，登录同一账号后按官方说明连接设备并确认解锁；解锁会清除数据。客户端或政策拒绝时立即停止，不允许免等待、免账号、第三方授权或其他绕过；不能用通用 fastboot 解锁命令代替此流程。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。本条目三种变体只能使用各自精确匹配的原厂镜像，不允许互刷。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。全球 Pro、印度 Pro 与印度 Pro Max 不允许互刷。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "xiaomi-unlock",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "Xiaomi Bootloader Unlock official portal",
+              "url": "https://en.miui.com/unlock/index.html",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Android Verified Boot documentation",
+              "url": "https://source.android.com/docs/security/features/verifiedboot",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。4G/5G、印度/全球/中国变体可能硬件不同；官方账号资格和反回滚限制不得绕过。本条目合并展示全球 Pro（sweet）、印度 Pro 与印度 Pro Max（sweetin），不代表固件兼容；不允许跨地区、跨 Pro/Pro Max 互刷，代号相同也不能替代精确型号与构建核对。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "redmi-note-11",
+          "name": "Redmi Note 11",
+          "codenames": [
+            "spes",
+            "spesn"
+          ],
+          "variants": [
+            "2201117TG",
+            "2201117TI"
+          ],
+          "androidVersions": [
+            "Android 11（出厂）",
+            "Android 12",
+            "Android 13"
+          ],
+          "soc": "Qualcomm Snapdragon 680",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "官方解锁后以匹配 ROM 的 boot.img 进行 Magisk 修补",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Redmi Note 11 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "按 Xiaomi 官方流程绑定设备与账号并满足等待/资格要求；不使用付费绕过、账户注入或非官方授权服务。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "按官方 Mi Unlock 资格、账号绑定和客户端流程解锁",
+              "description": "先按 Xiaomi 官方门户核对精确型号、地区与当前 MIUI/HyperOS 政策并完成所需资格申请；在设备的官方解锁设置中绑定本人账号与设备，满足官方等待期。仅下载官方 Windows Mi Unlock 客户端，登录同一账号后按官方说明连接设备并确认解锁；解锁会清除数据。客户端或政策拒绝时立即停止，不允许免等待、免账号、第三方授权或其他绕过；不能用通用 fastboot 解锁命令代替此流程。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "xiaomi-unlock",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "Xiaomi Bootloader Unlock official portal",
+              "url": "https://en.miui.com/unlock/index.html",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Android Verified Boot documentation",
+              "url": "https://source.android.com/docs/security/features/verifiedboot",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。4G/5G、印度/全球/中国变体可能硬件不同；官方账号资格和反回滚限制不得绕过。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "redmi-note-12-4g",
+          "name": "Redmi Note 12 4G",
+          "codenames": [
+            "tapas",
+            "topaz"
+          ],
+          "variants": [
+            "23021RAAEG",
+            "23028RNCAG"
+          ],
+          "androidVersions": [
+            "Android 13（出厂）",
+            "Android 14"
+          ],
+          "soc": "Qualcomm Snapdragon 685",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "确认 tapas/topaz 地区差异后修补匹配 boot.img",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Redmi Note 12 4G 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "按 Xiaomi 官方流程绑定设备与账号并满足等待/资格要求；不使用付费绕过、账户注入或非官方授权服务。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "按官方 Mi Unlock 资格、账号绑定和客户端流程解锁",
+              "description": "先按 Xiaomi 官方门户核对精确型号、地区与当前 MIUI/HyperOS 政策并完成所需资格申请；在设备的官方解锁设置中绑定本人账号与设备，满足官方等待期。仅下载官方 Windows Mi Unlock 客户端，登录同一账号后按官方说明连接设备并确认解锁；解锁会清除数据。客户端或政策拒绝时立即停止，不允许免等待、免账号、第三方授权或其他绕过；不能用通用 fastboot 解锁命令代替此流程。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "xiaomi-unlock",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "Xiaomi Bootloader Unlock official portal",
+              "url": "https://en.miui.com/unlock/index.html",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Android Verified Boot documentation",
+              "url": "https://source.android.com/docs/security/features/verifiedboot",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。4G/5G、印度/全球/中国变体可能硬件不同；官方账号资格和反回滚限制不得绕过。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "redmi-note-13-pro-5g",
+          "name": "Redmi Note 13 Pro 5G",
+          "codenames": [
+            "garnet"
+          ],
+          "variants": [
+            "2312DRA50G"
+          ],
+          "androidVersions": [
+            "Android 13（出厂）",
+            "Android 14"
+          ],
+          "soc": "Qualcomm Snapdragon 7s Gen 2",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Redmi Note 13 Pro 5G 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "按 Xiaomi 官方流程绑定设备与账号并满足等待/资格要求；不使用付费绕过、账户注入或非官方授权服务。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "按官方 Mi Unlock 资格、账号绑定和客户端流程解锁",
+              "description": "先按 Xiaomi 官方门户核对精确型号、地区与当前 MIUI/HyperOS 政策并完成所需资格申请；在设备的官方解锁设置中绑定本人账号与设备，满足官方等待期。仅下载官方 Windows Mi Unlock 客户端，登录同一账号后按官方说明连接设备并确认解锁；解锁会清除数据。客户端或政策拒绝时立即停止，不允许免等待、免账号、第三方授权或其他绕过；不能用通用 fastboot 解锁命令代替此流程。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "xiaomi-unlock",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "Xiaomi Bootloader Unlock official portal",
+              "url": "https://en.miui.com/unlock/index.html",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Android Verified Boot documentation",
+              "url": "https://source.android.com/docs/security/features/verifiedboot",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。4G/5G、印度/全球/中国变体可能硬件不同；官方账号资格和反回滚限制不得绕过。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        }
+      ]
+    },
+    {
+      "id": "oneplus",
+      "name": "OnePlus",
+      "summary": "OnePlus 设备；运营商版、地区版和 OxygenOS 代际可能改变解锁与恢复路径。",
+      "devices": [
+        {
+          "id": "oneplus-9",
+          "name": "OnePlus 9",
+          "codenames": [
+            "lemonade"
+          ],
+          "variants": [
+            "LE2110",
+            "LE2111",
+            "LE2113",
+            "LE2115"
+          ],
+          "androidVersions": [
+            "Android 11（出厂）",
+            "Android 12",
+            "Android 13",
+            "Android 14"
+          ],
+          "soc": "Qualcomm Snapdragon 888",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "可解锁零售版使用 Magisk 修补匹配 boot.img；运营商版先确认资格",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 OnePlus 9 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "OnePlus official support",
+              "url": "https://service.oneplus.com/global",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。运营商版可能不可解锁；分区和恢复工具随地区/系统代际变化，禁止使用来源不明的 EDL 授权服务。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "oneplus-10-pro",
+          "name": "OnePlus 10 Pro",
+          "codenames": [
+            "negroni"
+          ],
+          "variants": [
+            "NE2210",
+            "NE2211",
+            "NE2213",
+            "NE2215"
+          ],
+          "androidVersions": [
+            "Android 12（出厂）",
+            "Android 13",
+            "Android 14"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Gen 1",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 OnePlus 10 Pro 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "OnePlus official support",
+              "url": "https://service.oneplus.com/global",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。运营商版可能不可解锁；分区和恢复工具随地区/系统代际变化，禁止使用来源不明的 EDL 授权服务。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "oneplus-11",
+          "name": "OnePlus 11",
+          "codenames": [
+            "salami"
+          ],
+          "variants": [
+            "PHB110",
+            "CPH2447",
+            "CPH2449",
+            "CPH2451"
+          ],
+          "androidVersions": [
+            "Android 13（出厂）",
+            "Android 14",
+            "Android 15"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Gen 2",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "修补匹配版本的 init_boot.img；先保留可恢复的全量固件",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 OnePlus 11 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 init_boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "OnePlus official support",
+              "url": "https://service.oneplus.com/global",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。运营商版可能不可解锁；分区和恢复工具随地区/系统代际变化，禁止使用来源不明的 EDL 授权服务。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "oneplus-12",
+          "name": "OnePlus 12",
+          "codenames": [
+            "waffle"
+          ],
+          "variants": [
+            "PJD110",
+            "CPH2573",
+            "CPH2581",
+            "CPH2583"
+          ],
+          "androidVersions": [
+            "Android 14（出厂）",
+            "Android 15"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Gen 3",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 OnePlus 12 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "OnePlus official support",
+              "url": "https://service.oneplus.com/global",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。运营商版可能不可解锁；分区和恢复工具随地区/系统代际变化，禁止使用来源不明的 EDL 授权服务。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        }
+      ]
+    },
+    {
+      "id": "samsung",
+      "name": "Samsung",
+      "summary": "Galaxy 设备；解锁能力高度依赖销售地区/运营商，Knox Warranty Void eFuse 可能永久熔断。",
+      "devices": [
+        {
+          "id": "galaxy-s22",
+          "name": "Samsung Galaxy S22",
+          "codenames": [
+            "r0s",
+            "r0q"
+          ],
+          "variants": [
+            "SM-S901B",
+            "SM-S901E",
+            "SM-S901U",
+            "SM-S901U1"
+          ],
+          "androidVersions": [
+            "Android 12（出厂）",
+            "Android 13",
+            "Android 14"
+          ],
+          "soc": "Exynos 2200 / Snapdragon 8 Gen 1",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：Magisk 修补匹配 AP 包并经 Odin 刷写；先确认 Knox 后果",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S22 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和官方固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配官方固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。下载模式不是通用 fastboot 检测流程；型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "patch-and-flash-ap",
+              "title": "修补并刷写匹配 AP 包",
+              "description": "仅在该精确型号官方允许解锁且该机型/构建流程得到确认后，按 Magisk Samsung 指南在本机修补与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；使用 Odin 下载模式流程配套处理同一固件的 BL/AP/CP/CSC，初次安装的数据清除与 CSC 选择必须遵循该指南。此条目不是通用 boot 镜像写入流程，不改用通用 fastboot 启动分区刷写，不默认回锁；RootDesk 不分发 Odin 或固件。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse，导致 Wallet、Secure Folder、企业功能或保修状态不可恢复；美版运营商型号通常受阻。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s23",
+          "name": "Samsung Galaxy S23",
+          "codenames": [
+            "dm1q"
+          ],
+          "variants": [
+            "SM-S911B",
+            "SM-S911N",
+            "SM-S911U",
+            "SM-S911U1"
+          ],
+          "androidVersions": [
+            "Android 13（出厂）",
+            "Android 14",
+            "Android 15"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Gen 2 for Galaxy",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：Magisk 修补匹配 AP 包；禁止跨 CSC/型号刷写",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S23 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和官方固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配官方固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。下载模式不是通用 fastboot 检测流程；型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "patch-and-flash-ap",
+              "title": "修补并刷写匹配 AP 包",
+              "description": "仅在该精确型号官方允许解锁且该机型/构建流程得到确认后，按 Magisk Samsung 指南在本机修补与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；使用 Odin 下载模式流程配套处理同一固件的 BL/AP/CP/CSC，初次安装的数据清除与 CSC 选择必须遵循该指南。此条目不是通用 boot 镜像写入流程，不改用通用 fastboot 启动分区刷写，不默认回锁；RootDesk 不分发 Odin 或固件。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse，导致 Wallet、Secure Folder、企业功能或保修状态不可恢复；美版运营商型号通常受阻。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s24",
+          "name": "Samsung Galaxy S24",
+          "codenames": [
+            "e1s",
+            "e1q"
+          ],
+          "variants": [
+            "SM-S921B",
+            "SM-S921N",
+            "SM-S921U",
+            "SM-S921U1"
+          ],
+          "androidVersions": [
+            "Android 14（出厂）",
+            "Android 15"
+          ],
+          "soc": "Exynos 2400 / Snapdragon 8 Gen 3 for Galaxy",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版研究匹配 AP 包流程；美版运营商机通常不可解锁",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S24 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和官方固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配官方固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。下载模式不是通用 fastboot 检测流程；型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "patch-and-flash-ap",
+              "title": "修补并刷写匹配 AP 包",
+              "description": "仅在该精确型号官方允许解锁且该机型/构建流程得到确认后，按 Magisk Samsung 指南在本机修补与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；使用 Odin 下载模式流程配套处理同一固件的 BL/AP/CP/CSC，初次安装的数据清除与 CSC 选择必须遵循该指南。此条目不是通用 boot 镜像写入流程，不改用通用 fastboot 启动分区刷写，不默认回锁；RootDesk 不分发 Odin 或固件。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse，导致 Wallet、Secure Folder、企业功能或保修状态不可恢复；美版运营商型号通常受阻。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s25",
+          "name": "Samsung Galaxy S25",
+          "codenames": [
+            "pa1q"
+          ],
+          "variants": [
+            "SM-S931B",
+            "SM-S931N",
+            "SM-S931U",
+            "SM-S931U1"
+          ],
+          "androidVersions": [
+            "Android 15（出厂）"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Elite for Galaxy",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "默认视为阻断，除非该精确地区型号官方 UI 明确提供 OEM 解锁且有可恢复路径；这里只保留 Magisk 原厂 AP 包补丁与 Odin 下载模式说明，不提供通用 boot 写入路径，blocked 状态不得执行。",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S25 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和官方固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配官方固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。下载模式不是通用 fastboot 检测流程；型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目状态为 blocked，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "patch-and-flash-ap",
+              "title": "修补并刷写匹配 AP 包",
+              "description": "仅在该精确型号官方允许解锁且该机型/构建流程得到确认后，按 Magisk Samsung 指南在本机修补与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；使用 Odin 下载模式流程配套处理同一固件的 BL/AP/CP/CSC，初次安装的数据清除与 CSC 选择必须遵循该指南。此条目不是通用 boot 镜像写入流程，不改用通用 fastboot 启动分区刷写，不默认回锁；RootDesk 不分发 Odin 或固件。本条目状态为 blocked，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse，导致 Wallet、Secure Folder、企业功能或保修状态不可恢复；美版运营商型号通常受阻。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-a55",
+          "name": "Samsung Galaxy A55 5G",
+          "codenames": [
+            "a55x"
+          ],
+          "variants": [
+            "SM-A556B",
+            "SM-A556E",
+            "SM-A5560"
+          ],
+          "androidVersions": [
+            "Android 14（出厂）",
+            "Android 15"
+          ],
+          "soc": "Samsung Exynos 1480",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅部分地区版可解锁；研究匹配 AP 包与 Knox 影响",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy A55 5G 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和官方固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配官方固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。下载模式不是通用 fastboot 检测流程；型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "patch-and-flash-ap",
+              "title": "修补并刷写匹配 AP 包",
+              "description": "仅在该精确型号官方允许解锁且该机型/构建流程得到确认后，按 Magisk Samsung 指南在本机修补与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；使用 Odin 下载模式流程配套处理同一固件的 BL/AP/CP/CSC，初次安装的数据清除与 CSC 选择必须遵循该指南。此条目不是通用 boot 镜像写入流程，不改用通用 fastboot 启动分区刷写，不默认回锁；RootDesk 不分发 Odin 或固件。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse，导致 Wallet、Secure Folder、企业功能或保修状态不可恢复；美版运营商型号通常受阻。Android版本是已收录样例，不代表最新支持范围。"
+        }
+      ]
+    },
+    {
+      "id": "motorola",
+      "name": "Motorola",
+      "summary": "Motorola 设备；需通过官方门户判断型号资格并获取唯一解锁密钥。",
+      "devices": [
+        {
+          "id": "moto-g100",
+          "name": "Motorola Moto G100",
+          "codenames": [
+            "nio"
+          ],
+          "variants": [
+            "XT2125-4"
+          ],
+          "androidVersions": [
+            "Android 11（出厂）",
+            "Android 12"
+          ],
+          "soc": "Qualcomm Snapdragon 870",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "官方门户批准后解锁，Magisk 修补匹配 boot.img",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Motorola Moto G100 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "申请 Motorola 官方资格与设备唯一解锁密钥",
+              "description": "按 Motorola 官方门户说明读取该设备的唯一解锁申请数据，仅提交给官方资格检查页面；确认精确地区/运营商型号符合资格并接受数据清除与保修警告后，申请该设备唯一解锁密钥。仅用官方返回的本机密钥，按官方 OEM 解锁流程与屏幕提示操作，不使用通用 flashing unlock、其他设备密钥或第三方密钥服务；官方拒绝资格时停止，不得绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "motorola-unlock-portal"
+          ],
+          "sources": [
+            {
+              "title": "Motorola official bootloader unlock portal",
+              "url": "https://en-us.support.motorola.com/app/standalone/bootloader/unlock-your-device-a",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。官方解锁密钥可能影响保修并清除数据；运营商或企业型号可能不符合资格，不得绕过门户判定。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "motorola-edge-30",
+          "name": "Motorola Edge 30",
+          "codenames": [
+            "dubai"
+          ],
+          "variants": [
+            "XT2203-1"
+          ],
+          "androidVersions": [
+            "Android 12（出厂）",
+            "Android 13",
+            "Android 14"
+          ],
+          "soc": "Qualcomm Snapdragon 778G+",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "官方门户批准后解锁，核对双槽与匹配 boot.img",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Motorola Edge 30 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "申请 Motorola 官方资格与设备唯一解锁密钥",
+              "description": "按 Motorola 官方门户说明读取该设备的唯一解锁申请数据，仅提交给官方资格检查页面；确认精确地区/运营商型号符合资格并接受数据清除与保修警告后，申请该设备唯一解锁密钥。仅用官方返回的本机密钥，按官方 OEM 解锁流程与屏幕提示操作，不使用通用 flashing unlock、其他设备密钥或第三方密钥服务；官方拒绝资格时停止，不得绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "motorola-unlock-portal"
+          ],
+          "sources": [
+            {
+              "title": "Motorola official bootloader unlock portal",
+              "url": "https://en-us.support.motorola.com/app/standalone/bootloader/unlock-your-device-a",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。官方解锁密钥可能影响保修并清除数据；运营商或企业型号可能不符合资格，不得绕过门户判定。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "motorola-edge-40",
+          "name": "Motorola Edge 40",
+          "codenames": [
+            "lynkco"
+          ],
+          "variants": [
+            "XT2303-1",
+            "XT2303-2"
+          ],
+          "androidVersions": [
+            "Android 13（出厂）",
+            "Android 14"
+          ],
+          "soc": "MediaTek Dimensity 8020",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Motorola Edge 40 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "申请 Motorola 官方资格与设备唯一解锁密钥",
+              "description": "按 Motorola 官方门户说明读取该设备的唯一解锁申请数据，仅提交给官方资格检查页面；确认精确地区/运营商型号符合资格并接受数据清除与保修警告后，申请该设备唯一解锁密钥。仅用官方返回的本机密钥，按官方 OEM 解锁流程与屏幕提示操作，不使用通用 flashing unlock、其他设备密钥或第三方密钥服务；官方拒绝资格时停止，不得绕过。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "motorola-unlock-portal"
+          ],
+          "sources": [
+            {
+              "title": "Motorola official bootloader unlock portal",
+              "url": "https://en-us.support.motorola.com/app/standalone/bootloader/unlock-your-device-a",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。官方解锁密钥可能影响保修并清除数据；运营商或企业型号可能不符合资格，不得绕过门户判定。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        }
+      ]
+    },
+    {
+      "id": "nothing",
+      "name": "Nothing",
+      "summary": "Nothing Phone；官方资料允许标准 fastboot 解锁，但仍须核对固件版本、槽位和地区型号。",
+      "devices": [
+        {
+          "id": "nothing-phone-1",
+          "name": "Nothing Phone (1)",
+          "codenames": [
+            "Spacewar"
+          ],
+          "variants": [
+            "A063"
+          ],
+          "androidVersions": [
+            "Android 12（出厂）",
+            "Android 13",
+            "Android 14"
+          ],
+          "soc": "Qualcomm Snapdragon 778G+",
+          "bootloader": {
+            "availability": "official",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "community",
+            "method": "标准解锁后以 Magisk 修补匹配 boot.img",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确构建、分区与地区变体；状态为 research-needed/blocked 时不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Nothing Phone (1) 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "本条目记录的目标为 boot.img；必须从与精确型号、地区和当前构建完全匹配的原厂固件提取该镜像，核对分区布局与 ramdisk 位置，并与该机型文档交叉确认后按 Magisk 指南在本机修补。若固件证据与此目标不一致或无法确认则停止研究，不在 boot/init_boot 之间二选一盲刷，不使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "Nothing official support",
+              "url": "https://support.nothing.tech/hc/en-us",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。必须按当前固件确认 boot/init_boot 与 A/B 槽；OTA 后需重新核对镜像，切勿跨版本写入。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "nothing-phone-2",
+          "name": "Nothing Phone (2)",
+          "codenames": [
+            "Pong"
+          ],
+          "variants": [
+            "A065"
+          ],
+          "androidVersions": [
+            "Android 13（出厂）",
+            "Android 14",
+            "Android 15"
+          ],
+          "soc": "Qualcomm Snapdragon 8+ Gen 1",
+          "bootloader": {
+            "availability": "official",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Nothing Phone (2) 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "执行官方引导加载程序解锁",
+              "description": "仅使用 OEM 官方公开流程。确认屏幕警告后解锁会清除全部用户数据；若官方判定不支持则停止。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "commands": [
+                "fastboot flashing unlock"
+              ],
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "只有在完全恢复该设备当前可接受的原厂分区且成功启动后才考虑重新锁定；误锁非原厂状态可能变砖。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "payload-dumper-go"
+          ],
+          "sources": [
+            {
+              "title": "Nothing official support",
+              "url": "https://support.nothing.tech/hc/en-us",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。必须按当前固件确认 boot/init_boot 与 A/B 槽；OTA 后需重新核对镜像，切勿跨版本写入。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        }
+      ]
+    },
+    {
+      "id": "sony",
+      "name": "Sony",
+      "summary": "Xperia 开放设备；仅 Sony 解锁页面判定为允许的型号可用，解锁可能永久影响 DRM 相关能力。",
+      "devices": [
+        {
+          "id": "xperia-1-v",
+          "name": "Sony Xperia 1 V",
+          "codenames": [
+            "pdx234"
+          ],
+          "variants": [
+            "XQ-DQ54",
+            "XQ-DQ62",
+            "XQ-DQ72"
+          ],
+          "androidVersions": [
+            "Android 13（出厂）",
+            "Android 14",
+            "Android 15"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Gen 2",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Sony Xperia 1 V 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "先在服务菜单确认 Bootloader unlock allowed；评估 DRM 密钥及相机/媒体功能可能永久变化。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "确认 Sony 官方资格并申请本机解锁码",
+              "description": "先在 Sony 服务菜单确认 Bootloader unlock allowed 为 Yes，并在 Sony 官方解锁页核对精确型号是否支持；阅读数据清除、DRM 密钥及功能损失警告，按官方要求以本机 IMEI 申请设备唯一解锁码。仅按 Sony 官方 fastboot/OEM 解锁说明使用该设备对应的解锁码；不能使用通用 flashing unlock 或其他设备解锁码。资格不允许或官方不支持时停止，不得绕过。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "刷回官方固件或重新锁定不保证恢复已删除的 DRM 密钥或相关功能。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "sony-unlock-portal"
+          ],
+          "sources": [
+            {
+              "title": "Sony official bootloader unlock guide",
+              "url": "https://developer.sony.com/open-source/aosp-on-xperia-open-devices/get-started/unlock-bootloader/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Sony Open Devices program",
+              "url": "https://developer.sony.com/open-source/aosp-on-xperia-open-devices/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁会清除数据，并可能永久删除 DRM 相关密钥、影响相机处理及受保护媒体能力；重新锁定不保证恢复。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "xperia-1-vi",
+          "name": "Sony Xperia 1 VI",
+          "codenames": [
+            "pdx245"
+          ],
+          "variants": [
+            "XQ-EC54",
+            "XQ-EC72"
+          ],
+          "androidVersions": [
+            "Android 14（出厂）",
+            "Android 15"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Gen 3",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Sony Xperia 1 VI 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "先在服务菜单确认 Bootloader unlock allowed；评估 DRM 密钥及相机/媒体功能可能永久变化。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "确认 Sony 官方资格并申请本机解锁码",
+              "description": "先在 Sony 服务菜单确认 Bootloader unlock allowed 为 Yes，并在 Sony 官方解锁页核对精确型号是否支持；阅读数据清除、DRM 密钥及功能损失警告，按官方要求以本机 IMEI 申请设备唯一解锁码。仅按 Sony 官方 fastboot/OEM 解锁说明使用该设备对应的解锁码；不能使用通用 flashing unlock 或其他设备解锁码。资格不允许或官方不支持时停止，不得绕过。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "刷回官方固件或重新锁定不保证恢复已删除的 DRM 密钥或相关功能。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "sony-unlock-portal"
+          ],
+          "sources": [
+            {
+              "title": "Sony official bootloader unlock guide",
+              "url": "https://developer.sony.com/open-source/aosp-on-xperia-open-devices/get-started/unlock-bootloader/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Sony Open Devices program",
+              "url": "https://developer.sony.com/open-source/aosp-on-xperia-open-devices/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁会清除数据，并可能永久删除 DRM 相关密钥、影响相机处理及受保护媒体能力；重新锁定不保证恢复。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "xperia-5-v",
+          "name": "Sony Xperia 5 V",
+          "codenames": [
+            "pdx237"
+          ],
+          "variants": [
+            "XQ-DE54",
+            "XQ-DE72"
+          ],
+          "androidVersions": [
+            "Android 13（出厂）",
+            "Android 14"
+          ],
+          "soc": "Qualcomm Snapdragon 8 Gen 2",
+          "bootloader": {
+            "availability": "limited",
+            "dataWipe": true,
+            "notes": "仅以精确地区/运营商型号在 OEM 官方页面或设备 UI 的实时判定为准；“official/limited”不代表所有变体均可解锁。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅记录研究路径：先确认该精确型号的官方解锁资格；通过与型号、地区和当前构建完全匹配的原厂包及 ramdisk 位置确定应修补的启动镜像和对应分区，再按 Magisk 文档处理。缺少该机型/构建的分区证据时停止，禁止在 boot 与 init_boot 之间二选一盲刷。",
+            "summary": "现有来源未提供该精确机型/构建的充分分区与 ramdisk 证据，状态为 research-needed；仅作资料整理，未做实机验证，不得直接执行解锁或写入。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从“设置/关于手机”和引导加载程序界面同时核对 Sony Xperia 5 V 的型号、代号、地区与当前固件构建号。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与官方恢复资料。",
+            "仅从官方或项目原始发布页下载工具，并核验发布签名或 SHA-256（若发布方提供）。",
+            "先在服务菜单确认 Bootloader unlock allowed；评估 DRM 密钥及相机/媒体功能可能永久变化。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "识别精确变体与恢复路径",
+              "description": "交叉核对代号、地区、运营商、槽位与可用的官方全量固件；同名设备不得混刷。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "official-unlock",
+              "title": "确认 Sony 官方资格并申请本机解锁码",
+              "description": "先在 Sony 服务菜单确认 Bootloader unlock allowed 为 Yes，并在 Sony 官方解锁页核对精确型号是否支持；阅读数据清除、DRM 密钥及功能损失警告，按官方要求以本机 IMEI 申请设备唯一解锁码。仅按 Sony 官方 fastboot/OEM 解锁说明使用该设备对应的解锁码；不能使用通用 flashing unlock 或其他设备解锁码。资格不允许或官方不支持时停止，不得绕过。本条目状态为 research-needed，这里只记录资料路径，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "extract-and-patch",
+              "title": "提取并修补匹配镜像",
+              "description": "这是待研究条目，不得直接修补或写入。先从精确型号、地区与当前构建完全匹配的原厂包核对分区布局及 ramdisk 位置，并与该机型/构建文档交叉确认唯一修补目标及对应分区；不凭 Android 版本、镜像文件名或泛用教程推断。证据不足时停止，禁止 boot 与 init_boot 二选一盲刷；补全证据后才按 Magisk 文档在本机修补，禁止使用他人预修补镜像。",
+              "risk": "high"
+            },
+            {
+              "id": "test-or-flash",
+              "title": "取得精确机型证据后核对唯一目标与恢复条件",
+              "description": "只有官方解锁资格、精确机型/构建的分区及 ramdisk 证据和可恢复原厂镜像均确认后，才按该机型文档处理已核对的唯一目标与槽位；research-needed/blocked 状态不得执行。不得默认双槽同刷，不在 fastbootd 写入启动分区，不将回锁作为默认步骤。临时启动仅在该机型文档明确支持且镜像为完整含内核的 boot 镜像时才考虑；init_boot 不含内核，禁止用于临时启动。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入 bootloader/download 模式，使用与精确型号、地区和反回滚级别匹配的官方完整固件恢复。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "刷回官方固件或重新锁定不保证恢复已删除的 DRM 密钥或相关功能。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk",
+            "sony-unlock-portal"
+          ],
+          "sources": [
+            {
+              "title": "Sony official bootloader unlock guide",
+              "url": "https://developer.sony.com/open-source/aosp-on-xperia-open-devices/get-started/unlock-bootloader/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Sony Open Devices program",
+              "url": "https://developer.sony.com/open-source/aosp-on-xperia-open-devices/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk project documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁会清除数据，并可能永久删除 DRM 相关密钥、影响相机处理及受保护媒体能力；重新锁定不保证恢复。当前缺少精确机型/构建的启动分区证据，必须由匹配原厂包中的 ramdisk 位置确定修补路径；禁止 boot/init_boot 二选一盲刷，证据不足时停止。Android版本是已收录样例，不代表最新支持范围。"
+        }
+      ]
+    }
+  ]
+}

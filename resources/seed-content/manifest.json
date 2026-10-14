@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "1.0.0",
+  "generatedAt": "2026-10-14T00:00:00Z",
+  "verifiedAt": null,
+  "files": [
+    {
+      "path": "catalog.json",
+      "role": "8 品牌、30 设备的设备与流程目录",
+      "sha256": "6441571e79e0a4e5ced2283b75ce33240236f27965b4c9f5b7706acfb5fee8fa",
+      "bytes": 218898
+    },
+    {
+      "path": "tools.json",
+      "role": "桌面、APK、驱动和官方门户工具索引",
+      "sha256": "d998681a3d4cb0913ec4bdc27140e30b11f5d568e1fd6a052fef384e45751c15",
+      "bytes": 11199
+    },
+    {
+      "path": "commands.json",
+      "role": "固定参数 adb/fastboot 命令模板",
+      "sha256": "366459decac041225e4bbf4773139e1fbd75103b5d81e5b828d29a5fe51c277e",
+      "bytes": 10714
+    }
+  ],
+  "sourcePolicy": {
+    "priority": [
+      "OEM 官方文档与下载页",
+      "AOSP / Android Developers 官方文档",
+      "Magisk 与开源工具项目原始仓库",
+      "有明确等级标识的社区资料"
+    ],
+    "rules": [
+      "verifiedAt 仅在存在可靠逐链接复核记录时填写；null 表示没有可靠的已记录复核日期，不表示实机验证或内容背书。",
+      "社区流程必须标为 community 或 research-needed；无法确认、受运营商限制或缺少恢复路径时不得提升为 verified。",
+      "下载链接优先指向发布者原始页面；专有工具不重分发，Odin 仅提供说明链接。",
+      "设备型号、地区、运营商、构建号、AVB 与反回滚状态必须在执行前实时复核。"
+    ]
+  },
+  "disclaimer": "本资料仅用于合法拥有或已获明确授权的设备维护与研究，不提供或允许账号锁、FRP、MDM、激活锁、运营商限制或安全控制绕过。解锁通常会清除数据，可能影响保修、支付、DRM、企业合规并造成永久损坏；操作者须自行核对官方政策、精确变体、固件与恢复路径。",
+  "integrity": {
+    "algorithm": "SHA-256",
+    "scope": "files 数组所列文件的原始 UTF-8 字节；manifest.json 按要求不列自身。"
+  },
+  "reviewNotes": [
+    "本轮仅进行资料整理、已知数据错误纠正及部分文档复核；没有连接设备，也没有实机解锁、刷写或 root 验证，不代表全部来源或全部机型完成复核。",
+    "设备目录 90 条来源与工具索引 11 条来源共 101 条，缺少可靠逐链接复核记录；全部保留链接和 kind，将 verifiedAt 设为 null，manifest 的 verifiedAt 同样为 null。",
+    "Android 版本仅为已收录样例，不代表最新支持范围；缺少精确机型/构建的分区与 ramdisk 证据时标为 research-needed 并停止操作。"
+  ]
+}

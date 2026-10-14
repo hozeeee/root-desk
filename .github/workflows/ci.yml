@@ -1,0 +1,38 @@
+name: RootDesk CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Electron smoke on macOS
+        if: runner.os == 'macOS'
+        run: npm run smoke
+      - name: Package unsigned macOS build
+        if: runner.os == 'macOS'
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npm run package:mac
+      - name: Package Windows build
+        if: runner.os == 'Windows'
+        run: npm run package:win
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rootdesk-${{ runner.os }}
+          path: release/

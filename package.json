@@ -1,0 +1,44 @@
+{
+  "name": "rootdesk",
+  "version": "0.1.0",
+  "description": "安全、离线优先的 Android 知识库与工具台",
+  "main": "out/main/index.js",
+  "type": "module",
+  "scripts": {
+    "prepare:electron": "node scripts/prepare-electron.mjs",
+    "content:manifest": "node --experimental-strip-types scripts/generate-content-manifest.mjs",
+    "content:sign": "node scripts/sign-content-manifest.mjs",
+    "test:services": "vitest run tests/network-service.test.ts tests/download-service.test.ts tests/content-update-service.test.ts tests/proxy-service.test.ts tests/platform-tools-install.test.ts tests/content-publish.test.ts",
+    "test:tools": "electron scripts/test-platform-tools.cjs",
+    "predev": "npm run prepare:electron",
+    "dev": "electron-vite dev",
+    "prebuild": "npm run prepare:electron",
+    "build": "electron-vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "smoke": "electron scripts/smoke-electron.cjs",
+    "lint": "npm run typecheck",
+    "package:mac": "npm run build && electron-builder --mac",
+    "package:win": "npm run build && electron-builder --win"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "3.25.76",
+    "yauzl": "3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/yauzl": "2.10.3",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "5.2.0",
+    "electron": "44.7.2",
+    "electron-builder": "26.15.3",
+    "electron-vite": "5.0.0",
+    "typescript": "5.9.3",
+    "vite": "7.3.7",
+    "vitest": "4.1.11"
+  }
+}

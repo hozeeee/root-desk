@@ -1,0 +1,332 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "generatedAt": "2026-10-14T00:00:00Z",
+  "tools": [
+    {
+      "id": "android-platform-tools",
+      "name": "Android SDK Platform-Tools",
+      "category": "desktop-cli",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "description": "Google 官方 adb/fastboot 工具。仅从 Android Developers 下载，不使用第三方打包。",
+      "install": [
+        "下载对应系统压缩包并解压到用户可控目录。",
+        "可选：将目录加入 PATH；运行 adb version 与 fastboot --version 记录版本。"
+      ],
+      "usage": [
+        "USB 调试授权、设备识别、重启到 bootloader 与执行明确审阅过的 fastboot 命令。",
+        "每次写入前先用序列号和 product 变量确认目标设备。"
+      ],
+      "downloads": [
+        {
+          "platform": "all",
+          "url": "https://developer.android.com/tools/releases/platform-tools",
+          "notes": "官方发布与版本说明页。"
+        }
+      ],
+      "sources": [
+        {
+          "title": "SDK Platform-Tools release notes",
+          "url": "https://developer.android.com/tools/releases/platform-tools",
+          "kind": "official",
+          "verifiedAt": null
+        }
+      ],
+      "license": "Android SDK License / component notices",
+      "redistributable": false
+    },
+    {
+      "id": "magisk",
+      "name": "Magisk",
+      "category": "android-apk-project",
+      "platforms": [
+        "Android"
+      ],
+      "description": "开源 Android root 方案；应由目标设备自行修补与其当前构建完全匹配的 boot/init_boot/AP 镜像。",
+      "install": [
+        "仅从 GitHub 项目发布页获取 APK，并校验发布来源。",
+        "不要安装群聊、网盘或短链接中的改版 APK。"
+      ],
+      "usage": [
+        "按官方安装文档识别 Samsung 与非 Samsung 流程。",
+        "禁止使用他人预修补镜像；保留原始镜像与哈希。"
+      ],
+      "downloads": [
+        {
+          "platform": "Android",
+          "url": "https://github.com/topjohnwu/Magisk/releases",
+          "notes": "项目官方 GitHub Releases。"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Magisk documentation",
+          "url": "https://topjohnwu.github.io/Magisk/",
+          "kind": "project",
+          "verifiedAt": null
+        },
+        {
+          "title": "Magisk source and releases",
+          "url": "https://github.com/topjohnwu/Magisk",
+          "kind": "project",
+          "verifiedAt": null
+        }
+      ],
+      "license": "GPL-3.0",
+      "redistributable": true
+    },
+    {
+      "id": "odin-reference",
+      "name": "Odin（说明条目）",
+      "category": "desktop-flasher-reference",
+      "platforms": [
+        "Windows"
+      ],
+      "description": "Samsung 下载模式刷写工具的说明条目。RootDesk 不托管、不镜像、不重分发 Odin；仅链接 Samsung/Magisk 说明并要求用户自行确认合法来源与型号匹配。",
+      "install": [
+        "本资料库不提供安装包。",
+        "优先使用 Samsung 授权渠道、维修环境或可信的一手说明；拒绝捆绑下载器。"
+      ],
+      "usage": [
+        "仅用于明确支持的 Samsung 型号和完全匹配的 BL/AP/CP/CSC 组件。",
+        "刷写前核对型号、CSC、bootloader binary revision 与文件哈希。"
+      ],
+      "downloads": [
+        {
+          "platform": "Windows",
+          "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+          "notes": "仅为流程说明，不是 Odin 二进制下载。"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Magisk Samsung installation notes",
+          "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+          "kind": "project",
+          "verifiedAt": null
+        },
+        {
+          "title": "Samsung Knox documentation",
+          "url": "https://docs.samsungknox.com/",
+          "kind": "official",
+          "verifiedAt": null
+        }
+      ],
+      "license": "Samsung proprietary; public redistribution terms not established",
+      "redistributable": false
+    },
+    {
+      "id": "samsung-usb-driver",
+      "name": "Samsung Android USB Driver",
+      "category": "desktop-driver",
+      "platforms": [
+        "Windows"
+      ],
+      "description": "Samsung 官方 Windows USB 驱动，用于 adb 或下载模式设备识别。",
+      "install": [
+        "从 Samsung Developer 官方页面下载并安装。",
+        "安装后重新连接设备，在设备管理器中核对硬件 ID。"
+      ],
+      "usage": [
+        "只解决 USB 通信，不改变 bootloader 解锁资格。",
+        "出现未知设备时先更换数据线/端口并移除冲突驱动。"
+      ],
+      "downloads": [
+        {
+          "platform": "Windows",
+          "url": "https://developer.samsung.com/android-usb-driver",
+          "notes": "Samsung Developer 官方页面。"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Samsung Android USB Driver",
+          "url": "https://developer.samsung.com/android-usb-driver",
+          "kind": "official",
+          "verifiedAt": null
+        }
+      ],
+      "license": "Samsung proprietary download terms",
+      "redistributable": false
+    },
+    {
+      "id": "xiaomi-unlock",
+      "name": "Xiaomi Unlock",
+      "category": "desktop-unlock",
+      "platforms": [
+        "Windows"
+      ],
+      "description": "Xiaomi 官方 bootloader 解锁客户端；资格、账号绑定、等待期与地区政策以运行时结果为准。",
+      "install": [
+        "仅从 Xiaomi 官方解锁门户进入下载流程。",
+        "不要使用所谓免等待、免账号或远程授权修改版。"
+      ],
+      "usage": [
+        "先在设备官方设置中完成允许的账号/设备绑定。",
+        "工具判定不符合资格时停止，不尝试账号锁或授权绕过。"
+      ],
+      "downloads": [
+        {
+          "platform": "Windows",
+          "url": "https://en.miui.com/unlock/index.html",
+          "notes": "Xiaomi 官方解锁门户。"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Xiaomi Bootloader Unlock",
+          "url": "https://en.miui.com/unlock/index.html",
+          "kind": "official",
+          "verifiedAt": null
+        }
+      ],
+      "license": "Xiaomi proprietary terms",
+      "redistributable": false
+    },
+    {
+      "id": "motorola-unlock-portal",
+      "name": "Motorola Bootloader Unlock Portal",
+      "category": "web-service",
+      "platforms": [
+        "Web",
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "description": "Motorola 官方资格检查与解锁密钥申请页面；并非所有型号或运营商变体均符合资格。",
+      "install": [
+        "无需安装；通过官方支持域名访问。"
+      ],
+      "usage": [
+        "提交 fastboot 返回的设备数据前阅读隐私与保修说明。",
+        "门户判定不符合资格时停止，不使用第三方密钥服务。"
+      ],
+      "downloads": [
+        {
+          "platform": "Web",
+          "url": "https://en-us.support.motorola.com/app/standalone/bootloader/unlock-your-device-a",
+          "notes": "官方解锁说明与资格入口。"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Motorola Unlock Your Device",
+          "url": "https://en-us.support.motorola.com/app/standalone/bootloader/unlock-your-device-a",
+          "kind": "official",
+          "verifiedAt": null
+        }
+      ],
+      "license": "Motorola service terms",
+      "redistributable": false
+    },
+    {
+      "id": "sony-unlock-portal",
+      "name": "Sony Xperia Bootloader Unlock Page",
+      "category": "web-service",
+      "platforms": [
+        "Web",
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "description": "Sony 官方 Xperia 解锁资格、警告与解锁码流程。解锁可能影响 DRM 相关能力。",
+      "install": [
+        "无需安装；只访问 Sony Developer 官方域名。"
+      ],
+      "usage": [
+        "先在服务菜单确认 Bootloader unlock allowed。",
+        "保存警告与设备型号记录；官方判定不允许时停止。"
+      ],
+      "downloads": [
+        {
+          "platform": "Web",
+          "url": "https://developer.sony.com/open-source/aosp-on-xperia-open-devices/get-started/unlock-bootloader/",
+          "notes": "Sony 官方解锁指南。"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Sony Unlock Bootloader",
+          "url": "https://developer.sony.com/open-source/aosp-on-xperia-open-devices/get-started/unlock-bootloader/",
+          "kind": "official",
+          "verifiedAt": null
+        }
+      ],
+      "license": "Sony service terms",
+      "redistributable": false
+    },
+    {
+      "id": "payload-dumper-go",
+      "name": "payload-dumper-go",
+      "category": "desktop-cli-project",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "description": "从 Android OTA payload.bin 提取分区镜像的开源工具；提取并不证明镜像适用于目标设备。",
+      "install": [
+        "从项目 GitHub Releases 获取对应平台构建，或按项目说明自行构建。",
+        "记录版本与下载文件 SHA-256。"
+      ],
+      "usage": [
+        "仅处理来自 OEM 官方且与目标构建完全一致的 OTA 包。",
+        "提取后核对镜像名、大小和构建信息；不要跨型号使用。"
+      ],
+      "downloads": [
+        {
+          "platform": "all",
+          "url": "https://github.com/ssut/payload-dumper-go/releases",
+          "notes": "项目 GitHub Releases。"
+        }
+      ],
+      "sources": [
+        {
+          "title": "payload-dumper-go repository",
+          "url": "https://github.com/ssut/payload-dumper-go",
+          "kind": "project",
+          "verifiedAt": null
+        }
+      ],
+      "license": "Apache-2.0",
+      "redistributable": true
+    },
+    {
+      "id": "google-usb-driver",
+      "name": "Google USB Driver",
+      "category": "desktop-driver",
+      "platforms": [
+        "Windows"
+      ],
+      "description": "Google 官方 Windows USB 驱动，主要用于 Google 设备的 adb/fastboot 识别。",
+      "install": [
+        "通过 Android Studio SDK Manager 或官方页面下载。",
+        "在设备管理器中仅为匹配的 Android 接口选择驱动。"
+      ],
+      "usage": [
+        "验证 adb 与 fastboot 模式分别可识别设备。"
+      ],
+      "downloads": [
+        {
+          "platform": "Windows",
+          "url": "https://developer.android.com/studio/run/win-usb",
+          "notes": "Android Developers 官方页面。"
+        }
+      ],
+      "sources": [
+        {
+          "title": "Get the Google USB Driver",
+          "url": "https://developer.android.com/studio/run/win-usb",
+          "kind": "official",
+          "verifiedAt": null
+        }
+      ],
+      "license": "Google USB Driver license",
+      "redistributable": false
+    }
+  ]
+}
