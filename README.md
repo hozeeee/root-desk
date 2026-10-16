@@ -23,7 +23,7 @@ npm run dev
 npm run typecheck     # tsc --noEmit
 npm test              # Vitest，全部单元与安全回归测试
 npm run build         # electron-vite 构建到 out/
-npm run smoke         # 真实 Electron 冒烟：安全配置、具名 IPC、8 品牌 30 机型、六页导航、深浅色截图（.smoke/）
+npm run smoke         # 真实 Electron 冒烟：安全配置、具名 IPC、9 品牌 63 机型、六页导航、深浅色截图（.smoke/）
 npm run test:services # 仅网络 / 下载 / 更新 / 代理 / 平台工具服务测试
 npm run test:tools    # 可选：真实下载并安装官方 Platform Tools 到临时目录（需联网）
 ```

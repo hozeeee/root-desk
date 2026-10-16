@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -33,14 +34,22 @@ describe('content schemas', () => {
     }
   })
 
-  it('覆盖恰好8品牌30设备，全部工具引用有效且保留说明', async () => {
+  it('覆盖恰好9品牌63设备，全部工具引用有效且保留说明', async () => {
     const catalog = catalogSchema.parse(JSON.parse(await readFile(resolve('resources/seed-content/catalog.json'), 'utf8')))
     const tools = toolsDocumentSchema.parse(JSON.parse(await readFile(resolve('resources/seed-content/tools.json'), 'utf8')))
     const commands = commandsDocumentSchema.parse(JSON.parse(await readFile(resolve('resources/seed-content/commands.json'), 'utf8')))
     const devices = catalog.brands.flatMap((brand) => brand.devices)
-    expect(catalog.brands).toHaveLength(8)
-    expect(devices).toHaveLength(30)
-    expect(new Set(devices.map((device) => device.id)).size).toBe(30)
+    const deviceById = new Map(devices.map((device) => [device.id, device]))
+    const huawei = catalog.brands.find((brand) => brand.id === 'huawei')
+    expect(catalog.brands).toHaveLength(9)
+    expect(devices).toHaveLength(63)
+    expect(new Set(devices.map((device) => device.id)).size).toBe(63)
+    expect(huawei?.devices).toHaveLength(15)
+    expect(['galaxy-s8', 'galaxy-note20', 'galaxy-note20-ultra'].every((id) => deviceById.has(id))).toBe(true)
+    expect(huawei?.devices.every((device) => device.root.status === 'blocked')).toBe(true)
+    const huaweiCommands = huawei?.devices.flatMap((device) => device.steps.flatMap((step) => step.commands)) ?? []
+    expect(huaweiCommands.every((command) => !/^fastboot\s+(?:boot|flash|flashing\s+unlock)\b/.test(command))).toBe(true)
+    expect(new Set([catalog.version, tools.version, commands.version])).toEqual(new Set(['1.1.0']))
     expect(new Set(commands.commands.map((command) => command.id)).size).toBe(commands.commands.length)
     for (const device of devices) {
       expect(device.prerequisites.length).toBeGreaterThan(0)
@@ -56,5 +65,19 @@ describe('content schemas', () => {
       expect(tool.sources.length).toBeGreaterThan(0)
     }
     expect(commands.commands.find((command) => command.id === 'fastboot-flash-boot')?.parameters[0].type).toBe('file')
+  })
+
+  it('seed manifest 的字节数与 SHA-256 和实际文件一致', async () => {
+    const directory = resolve('resources/seed-content')
+    const manifest = JSON.parse(await readFile(resolve(directory, 'manifest.json'), 'utf8')) as {
+      contentVersion: string
+      files: Array<{ path: string; bytes: number; sha256: string }>
+    }
+    expect(manifest.contentVersion).toBe('1.1.0')
+    for (const file of manifest.files) {
+      const content = await readFile(resolve(directory, file.path))
+      expect(content.byteLength, file.path).toBe(file.bytes)
+      expect(createHash('sha256').update(content).digest('hex'), file.path).toBe(file.sha256)
+    }
   })
 })

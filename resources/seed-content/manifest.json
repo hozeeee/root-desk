@@ -1,25 +1,25 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "1.0.0",
+  "contentVersion": "1.1.0",
   "generatedAt": "2026-10-14T00:00:00Z",
   "verifiedAt": null,
   "files": [
     {
       "path": "catalog.json",
-      "role": "8 品牌、30 设备的设备与流程目录",
-      "sha256": "6441571e79e0a4e5ced2283b75ce33240236f27965b4c9f5b7706acfb5fee8fa",
-      "bytes": 218898
+      "role": "9 品牌、63 设备的设备与流程目录",
+      "sha256": "46d3c77c3c3e63fd035cd8949bb6484c4a5003a9b43e474382b393e6b5b37565",
+      "bytes": 440349
     },
     {
       "path": "tools.json",
       "role": "桌面、APK、驱动和官方门户工具索引",
-      "sha256": "d998681a3d4cb0913ec4bdc27140e30b11f5d568e1fd6a052fef384e45751c15",
+      "sha256": "5d27fe21c3452d96a905d7c687c5d24d00b43b38746ab2dcf2a6ed8735348272",
       "bytes": 11199
     },
     {
       "path": "commands.json",
       "role": "固定参数 adb/fastboot 命令模板",
-      "sha256": "366459decac041225e4bbf4773139e1fbd75103b5d81e5b828d29a5fe51c277e",
+      "sha256": "0ac03bd3f07afbeb770537af87013020e89a41c7f583c84aa1a5f3a35c624c36",
       "bytes": 10714
     }
   ],
@@ -44,7 +44,7 @@
   },
   "reviewNotes": [
     "本轮仅进行资料整理、已知数据错误纠正及部分文档复核；没有连接设备，也没有实机解锁、刷写或 root 验证，不代表全部来源或全部机型完成复核。",
-    "设备目录 90 条来源与工具索引 11 条来源共 101 条，缺少可靠逐链接复核记录；全部保留链接和 kind，将 verifiedAt 设为 null，manifest 的 verifiedAt 同样为 null。",
-    "Android 版本仅为已收录样例，不代表最新支持范围；缺少精确机型/构建的分区与 ramdisk 证据时标为 research-needed 并停止操作。"
+    "设备目录 189 条来源与工具索引 11 条来源共 200 条，缺少可靠逐链接复核记录；全部保留链接和 kind，将 verifiedAt 设为 null，manifest 的 verifiedAt 同样为 null。",
+    "Android 版本仅为已收录样例，不代表最新支持范围；缺少精确机型/构建的分区与 ramdisk 证据时标为 research-needed 或 blocked 并停止操作。"
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "generatedAt": "2026-10-14T00:00:00Z",
   "brands": [
     {
@@ -2056,6 +2056,2166 @@
       "summary": "Galaxy 设备；解锁能力高度依赖销售地区/运营商，Knox Warranty Void eFuse 可能永久熔断。",
       "devices": [
         {
+          "id": "galaxy-s8",
+          "name": "Samsung Galaxy S8",
+          "codenames": [
+            "dreamlte",
+            "dreamqlte"
+          ],
+          "variants": [
+            "SM-G950F",
+            "SM-G950N",
+            "SM-G950U",
+            "SM-G950U1",
+            "SM-G950W",
+            "SM-G9500"
+          ],
+          "androidVersions": [
+            "Android 7.0（出厂）",
+            "Android 8.0",
+            "Android 9"
+          ],
+          "soc": "Exynos 8895 / Snapdragon 835",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S8 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s8-plus",
+          "name": "Samsung Galaxy S8+",
+          "codenames": [
+            "dream2lte",
+            "dream2qlte"
+          ],
+          "variants": [
+            "SM-G955F",
+            "SM-G955N",
+            "SM-G955U",
+            "SM-G955U1",
+            "SM-G955W",
+            "SM-G9550"
+          ],
+          "androidVersions": [
+            "Android 7.0（出厂）",
+            "Android 8.0",
+            "Android 9"
+          ],
+          "soc": "Exynos 8895 / Snapdragon 835",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S8+ 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s9",
+          "name": "Samsung Galaxy S9",
+          "codenames": [
+            "starlte",
+            "starqlte"
+          ],
+          "variants": [
+            "SM-G960F",
+            "SM-G960N",
+            "SM-G960U",
+            "SM-G960U1",
+            "SM-G960W",
+            "SM-G9600"
+          ],
+          "androidVersions": [
+            "Android 8.0（出厂）",
+            "Android 9",
+            "Android 10"
+          ],
+          "soc": "Exynos 9810 / Snapdragon 845",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S9 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s9-plus",
+          "name": "Samsung Galaxy S9+",
+          "codenames": [
+            "star2lte",
+            "star2qlte"
+          ],
+          "variants": [
+            "SM-G965F",
+            "SM-G965N",
+            "SM-G965U",
+            "SM-G965U1",
+            "SM-G965W",
+            "SM-G9650"
+          ],
+          "androidVersions": [
+            "Android 8.0（出厂）",
+            "Android 9",
+            "Android 10"
+          ],
+          "soc": "Exynos 9810 / Snapdragon 845",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S9+ 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s10e",
+          "name": "Samsung Galaxy S10e",
+          "codenames": [
+            "beyond0lte",
+            "beyond0q"
+          ],
+          "variants": [
+            "SM-G970F",
+            "SM-G970N",
+            "SM-G970U",
+            "SM-G970U1",
+            "SM-G970W",
+            "SM-G9700"
+          ],
+          "androidVersions": [
+            "Android 9（出厂）",
+            "Android 10",
+            "Android 11",
+            "Android 12"
+          ],
+          "soc": "Exynos 9820 / Snapdragon 855",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S10e 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s10",
+          "name": "Samsung Galaxy S10",
+          "codenames": [
+            "beyond1lte",
+            "beyond1q"
+          ],
+          "variants": [
+            "SM-G973F",
+            "SM-G973N",
+            "SM-G973U",
+            "SM-G973U1",
+            "SM-G973W",
+            "SM-G9730"
+          ],
+          "androidVersions": [
+            "Android 9（出厂）",
+            "Android 10",
+            "Android 11",
+            "Android 12"
+          ],
+          "soc": "Exynos 9820 / Snapdragon 855",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S10 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s10-plus",
+          "name": "Samsung Galaxy S10+",
+          "codenames": [
+            "beyond2lte",
+            "beyond2q"
+          ],
+          "variants": [
+            "SM-G975F",
+            "SM-G975N",
+            "SM-G975U",
+            "SM-G975U1",
+            "SM-G975W",
+            "SM-G9750"
+          ],
+          "androidVersions": [
+            "Android 9（出厂）",
+            "Android 10",
+            "Android 11",
+            "Android 12"
+          ],
+          "soc": "Exynos 9820 / Snapdragon 855",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S10+ 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s20",
+          "name": "Samsung Galaxy S20 / S20 5G",
+          "codenames": [
+            "x1s",
+            "x1q"
+          ],
+          "variants": [
+            "SM-G980F",
+            "SM-G981B",
+            "SM-G981N",
+            "SM-G981U",
+            "SM-G981U1",
+            "SM-G981W",
+            "SM-G9810"
+          ],
+          "androidVersions": [
+            "Android 10（出厂）",
+            "Android 11",
+            "Android 12",
+            "Android 13"
+          ],
+          "soc": "Exynos 990 / Snapdragon 865",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：Magisk 修补匹配 AP 包并经下载模式刷写；先确认 Knox 后果",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S20 / S20 5G 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对匹配 AP 包安装路径",
+              "description": "仅在该精确型号允许解锁且机型/构建流程得到确认后，按 Magisk Samsung 指南在本机处理与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；不得改用通用 fastboot 写入，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s20-plus",
+          "name": "Samsung Galaxy S20+ / S20+ 5G",
+          "codenames": [
+            "y2s",
+            "y2q"
+          ],
+          "variants": [
+            "SM-G985F",
+            "SM-G986B",
+            "SM-G986N",
+            "SM-G986U",
+            "SM-G986U1",
+            "SM-G986W",
+            "SM-G9860"
+          ],
+          "androidVersions": [
+            "Android 10（出厂）",
+            "Android 11",
+            "Android 12",
+            "Android 13"
+          ],
+          "soc": "Exynos 990 / Snapdragon 865",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：Magisk 修补匹配 AP 包并经下载模式刷写；先确认 Knox 后果",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S20+ / S20+ 5G 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对匹配 AP 包安装路径",
+              "description": "仅在该精确型号允许解锁且机型/构建流程得到确认后，按 Magisk Samsung 指南在本机处理与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；不得改用通用 fastboot 写入，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s20-ultra",
+          "name": "Samsung Galaxy S20 Ultra 5G",
+          "codenames": [
+            "z3s",
+            "z3q"
+          ],
+          "variants": [
+            "SM-G988B",
+            "SM-G988N",
+            "SM-G988U",
+            "SM-G988U1",
+            "SM-G988W",
+            "SM-G9880"
+          ],
+          "androidVersions": [
+            "Android 10（出厂）",
+            "Android 11",
+            "Android 12",
+            "Android 13"
+          ],
+          "soc": "Exynos 990 / Snapdragon 865",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：Magisk 修补匹配 AP 包并经下载模式刷写；先确认 Knox 后果",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S20 Ultra 5G 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对匹配 AP 包安装路径",
+              "description": "仅在该精确型号允许解锁且机型/构建流程得到确认后，按 Magisk Samsung 指南在本机处理与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；不得改用通用 fastboot 写入，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s21",
+          "name": "Samsung Galaxy S21 5G",
+          "codenames": [
+            "o1s",
+            "o1q"
+          ],
+          "variants": [
+            "SM-G991B",
+            "SM-G991N",
+            "SM-G991U",
+            "SM-G991U1",
+            "SM-G991W",
+            "SM-G9910"
+          ],
+          "androidVersions": [
+            "Android 11（出厂）",
+            "Android 12",
+            "Android 13",
+            "Android 14"
+          ],
+          "soc": "Exynos 2100 / Snapdragon 888",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：Magisk 修补匹配 AP 包并经下载模式刷写；先确认 Knox 后果",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S21 5G 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对匹配 AP 包安装路径",
+              "description": "仅在该精确型号允许解锁且机型/构建流程得到确认后，按 Magisk Samsung 指南在本机处理与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；不得改用通用 fastboot 写入，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-s21-ultra",
+          "name": "Samsung Galaxy S21 Ultra 5G",
+          "codenames": [
+            "p3s",
+            "p3q"
+          ],
+          "variants": [
+            "SM-G998B",
+            "SM-G998N",
+            "SM-G998U",
+            "SM-G998U1",
+            "SM-G998W",
+            "SM-G9980"
+          ],
+          "androidVersions": [
+            "Android 11（出厂）",
+            "Android 12",
+            "Android 13",
+            "Android 14"
+          ],
+          "soc": "Exynos 2100 / Snapdragon 888",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：Magisk 修补匹配 AP 包并经下载模式刷写；先确认 Knox 后果",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy S21 Ultra 5G 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对匹配 AP 包安装路径",
+              "description": "仅在该精确型号允许解锁且机型/构建流程得到确认后，按 Magisk Samsung 指南在本机处理与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；不得改用通用 fastboot 写入，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-note8",
+          "name": "Samsung Galaxy Note8",
+          "codenames": [
+            "greatlte",
+            "greatqlte"
+          ],
+          "variants": [
+            "SM-N950F",
+            "SM-N950N",
+            "SM-N950U",
+            "SM-N950U1",
+            "SM-N950W",
+            "SM-N9500"
+          ],
+          "androidVersions": [
+            "Android 7.1.1（出厂）",
+            "Android 8.0",
+            "Android 9"
+          ],
+          "soc": "Exynos 8895 / Snapdragon 835",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy Note8 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-note9",
+          "name": "Samsung Galaxy Note9",
+          "codenames": [
+            "crownlte",
+            "crownqlte"
+          ],
+          "variants": [
+            "SM-N960F",
+            "SM-N960N",
+            "SM-N960U",
+            "SM-N960U1",
+            "SM-N960W",
+            "SM-N9600"
+          ],
+          "androidVersions": [
+            "Android 8.1（出厂）",
+            "Android 9",
+            "Android 10"
+          ],
+          "soc": "Exynos 9810 / Snapdragon 845",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy Note9 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-note10",
+          "name": "Samsung Galaxy Note10 / Note10 5G",
+          "codenames": [
+            "d1",
+            "d1q"
+          ],
+          "variants": [
+            "SM-N970F",
+            "SM-N970N",
+            "SM-N970U",
+            "SM-N970U1",
+            "SM-N970W",
+            "SM-N9700",
+            "SM-N971N"
+          ],
+          "androidVersions": [
+            "Android 9（出厂）",
+            "Android 10",
+            "Android 11",
+            "Android 12"
+          ],
+          "soc": "Exynos 9825 / Snapdragon 855",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy Note10 / Note10 5G 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-note10-plus",
+          "name": "Samsung Galaxy Note10+ / Note10+ 5G",
+          "codenames": [
+            "d2s",
+            "d2q"
+          ],
+          "variants": [
+            "SM-N975F",
+            "SM-N975U",
+            "SM-N975U1",
+            "SM-N975W",
+            "SM-N9750",
+            "SM-N976B",
+            "SM-N976N"
+          ],
+          "androidVersions": [
+            "Android 9（出厂）",
+            "Android 10",
+            "Android 11",
+            "Android 12"
+          ],
+          "soc": "Exynos 9825 / Snapdragon 855",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：先核对该代设备专用的原厂 AP 或恢复环境安装路径；不得套用新机流程",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy Note10+ / Note10+ 5G 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对该代设备专用安装路径",
+              "description": "旧款 Galaxy 的分区布局、ramdisk 与可用恢复环境差异很大。仅在该精确型号可官方解锁、原厂包可恢复，且可靠机型文档明确说明目标分区或恢复环境后继续；不得照搬新款 Galaxy 的 AP 修补流程，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-note20",
+          "name": "Samsung Galaxy Note20 / Note20 5G",
+          "codenames": [
+            "c1s",
+            "c1q"
+          ],
+          "variants": [
+            "SM-N980F",
+            "SM-N981B",
+            "SM-N981N",
+            "SM-N981U",
+            "SM-N981U1",
+            "SM-N981W",
+            "SM-N9810"
+          ],
+          "androidVersions": [
+            "Android 10（出厂）",
+            "Android 11",
+            "Android 12",
+            "Android 13"
+          ],
+          "soc": "Exynos 990 / Snapdragon 865+",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：Magisk 修补匹配 AP 包并经下载模式刷写；先确认 Knox 后果",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy Note20 / Note20 5G 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对匹配 AP 包安装路径",
+              "description": "仅在该精确型号允许解锁且机型/构建流程得到确认后，按 Magisk Samsung 指南在本机处理与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；不得改用通用 fastboot 写入，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
+          "id": "galaxy-note20-ultra",
+          "name": "Samsung Galaxy Note20 Ultra / Note20 Ultra 5G",
+          "codenames": [
+            "c2s",
+            "c2q"
+          ],
+          "variants": [
+            "SM-N985F",
+            "SM-N986B",
+            "SM-N986N",
+            "SM-N986U",
+            "SM-N986U1",
+            "SM-N986W",
+            "SM-N9860"
+          ],
+          "androidVersions": [
+            "Android 10（出厂）",
+            "Android 11",
+            "Android 12",
+            "Android 13"
+          ],
+          "soc": "Exynos 990 / Snapdragon 865+",
+          "bootloader": {
+            "availability": "carrier-dependent",
+            "dataWipe": true,
+            "notes": "以下载模式与 OEM 解锁开关的实时状态为准；许多北美运营商变体不可解锁，任何解锁都可能触发不可逆 Knox eFuse。"
+          },
+          "root": {
+            "status": "research-needed",
+            "method": "仅可解锁地区版：Magisk 修补匹配 AP 包并经下载模式刷写；先确认 Knox 后果",
+            "summary": "这是资料性社区流程，不是逐台实机认证。必须匹配精确型号、CSC、bootloader binary revision、构建与代际流程；research-needed 状态不得直接执行。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过账号锁、FRP、MDM、激活锁或运营商债务限制。",
+            "从设置/关于手机、adb 产品与型号信息及下载模式交叉核对 Samsung Galaxy Note20 Ultra / Note20 Ultra 5G 的精确型号、CSC、bootloader binary revision 和当前构建；不使用通用 fastboot 检测。",
+            "离线备份用户数据、双重验证恢复码和关键文件；解锁通常会执行恢复出厂设置。",
+            "使用可靠 USB 数据线、保持电量不低于 60%，并准备另一台可联网电脑与精确型号的官方恢复资料。",
+            "核对下载模式精确型号与 bootloader binary revision，并通过系统/服务提供商软件信息和匹配固件确认 CSC；理解 Knox Warranty Void 熔断后通常不可逆。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权范围并备份",
+              "description": "记录所有权/授权、型号、构建号与备份位置；退出工作资料和企业管理前应由管理员正式解除，而不是绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对 adb 产品信息与 Samsung 下载模式",
+              "description": "在系统设置及 adb 中记录产品、型号和当前构建信息，再按该精确型号官方说明进入下载模式核对 Product Name/型号和 bootloader binary revision；结合系统软件/服务提供商信息与匹配固件核对 CSC，记录 OEM/FRP/KG/RMM 状态。型号、CSC 或 binary revision 不一致时停止，禁止跨型号、跨 CSC 或反回滚降级。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "confirm-oem-unlock",
+              "title": "确认 OEM 解锁是否由官方 UI 提供",
+              "description": "若开发者选项没有 OEM 解锁、下载模式不允许解锁或型号受运营商限制，立即停止；不得尝试漏洞或付费绕过。",
+              "risk": "critical"
+            },
+            {
+              "id": "unlock-bootloader",
+              "title": "通过设备下载模式执行官方解锁确认",
+              "description": "仅对明确支持的精确型号操作。此步骤会清除数据，并可能永久熔断 Knox eFuse，影响 Wallet、Secure Folder、企业合规和保修判定。本条目为 research-needed，未完成精确机型证据复核前不得执行。",
+              "risk": "critical"
+            },
+            {
+              "id": "verify-generation-path",
+              "title": "核对匹配 AP 包安装路径",
+              "description": "仅在该精确型号允许解锁且机型/构建流程得到确认后，按 Magisk Samsung 指南在本机处理与型号、CSC、bootloader binary revision 及当前构建匹配的原厂 AP 包；不得改用通用 fastboot 写入，不使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "启动后验证与保留审计记录",
+              "description": "验证启动、网络、相机、加密、更新策略和 root 管理器状态；记录所用文件哈希。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若尚未解锁或写入，停止操作并保留原状态。",
+            "若可进入下载模式，使用与精确型号、CSC 和 bootloader binary revision 匹配的官方完整固件恢复；不得反回滚降级。",
+            "恢复后执行完整启动、加密、无线连接、相机与更新检查，再从可信备份恢复个人数据。",
+            "Knox Warranty Void eFuse 一旦熔断无法通过刷回官方固件恢复；仅恢复软件状态，不承诺恢复 Knox 功能。"
+          ],
+          "tools": [
+            "magisk",
+            "odin-reference",
+            "samsung-usb-driver"
+          ],
+          "sources": [
+            {
+              "title": "Samsung Knox documentation",
+              "url": "https://docs.samsungknox.com/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Samsung Android USB Driver",
+              "url": "https://developer.samsung.com/android-usb-driver",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk Samsung installation notes",
+              "url": "https://topjohnwu.github.io/Magisk/install.html#samsung-devices",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse；北美运营商型号通常受阻。Android 版本是已收录样例，不代表最新支持范围。"
+        },
+        {
           "id": "galaxy-s22",
           "name": "Samsung Galaxy S22",
           "codenames": [
@@ -2636,6 +4796,1769 @@
             }
           ],
           "warning": "引导加载程序解锁会清除数据；刷错分区、跨型号镜像、AVB 校验失败或反回滚触发可导致无法启动甚至永久损坏。解锁/非官方镜像可能永久熔断 Knox Warranty Void eFuse，导致 Wallet、Secure Folder、企业功能或保修状态不可恢复；美版运营商型号通常受阻。Android版本是已收录样例，不代表最新支持范围。"
+        }
+      ]
+    },
+    {
+      "id": "huawei",
+      "name": "Huawei",
+      "summary": "收录仍以 Android/EMUI 为基础的历史机型；公开 bootloader 解锁码入口已不可用，锁定设备保持 blocked，HarmonyOS NEXT 等非 Android 新机不纳入。",
+      "devices": [
+        {
+          "id": "huawei-p9",
+          "name": "Huawei P9",
+          "codenames": [
+            "eva"
+          ],
+          "variants": [
+            "EVA-L09",
+            "EVA-L19",
+            "EVA-L29",
+            "EVA-AL10"
+          ],
+          "androidVersions": [
+            "Android 6.0（出厂）",
+            "Android 7.0"
+          ],
+          "soc": "HiSilicon Kirin 955",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei P9 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-p10",
+          "name": "Huawei P10",
+          "codenames": [
+            "vtr"
+          ],
+          "variants": [
+            "VTR-L09",
+            "VTR-L29",
+            "VTR-AL00"
+          ],
+          "androidVersions": [
+            "Android 7.0（出厂）",
+            "Android 8.0",
+            "Android 9"
+          ],
+          "soc": "HiSilicon Kirin 960",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei P10 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-p20",
+          "name": "Huawei P20",
+          "codenames": [
+            "emily",
+            "eml"
+          ],
+          "variants": [
+            "EML-L09",
+            "EML-L29",
+            "EML-AL00"
+          ],
+          "androidVersions": [
+            "Android 8.1（出厂）",
+            "Android 9",
+            "Android 10"
+          ],
+          "soc": "HiSilicon Kirin 970",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei P20 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-p20-pro",
+          "name": "Huawei P20 Pro",
+          "codenames": [
+            "charlotte",
+            "clt"
+          ],
+          "variants": [
+            "CLT-L09",
+            "CLT-L29",
+            "CLT-AL00"
+          ],
+          "androidVersions": [
+            "Android 8.1（出厂）",
+            "Android 9",
+            "Android 10"
+          ],
+          "soc": "HiSilicon Kirin 970",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei P20 Pro 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-p30",
+          "name": "Huawei P30",
+          "codenames": [
+            "elle",
+            "ele"
+          ],
+          "variants": [
+            "ELE-L09",
+            "ELE-L29",
+            "ELE-AL00"
+          ],
+          "androidVersions": [
+            "Android 9（出厂）",
+            "Android 10"
+          ],
+          "soc": "HiSilicon Kirin 980",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei P30 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-p30-pro",
+          "name": "Huawei P30 Pro",
+          "codenames": [
+            "vogue",
+            "vog"
+          ],
+          "variants": [
+            "VOG-L09",
+            "VOG-L29",
+            "VOG-AL00"
+          ],
+          "androidVersions": [
+            "Android 9（出厂）",
+            "Android 10"
+          ],
+          "soc": "HiSilicon Kirin 980",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei P30 Pro 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-p40",
+          "name": "Huawei P40",
+          "codenames": [
+            "anna",
+            "ana"
+          ],
+          "variants": [
+            "ANA-NX9",
+            "ANA-LX4",
+            "ANA-AN00"
+          ],
+          "androidVersions": [
+            "Android 10（出厂，EMUI）"
+          ],
+          "soc": "HiSilicon Kirin 990 5G",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei P40 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-p40-pro",
+          "name": "Huawei P40 Pro",
+          "codenames": [
+            "elsa",
+            "els"
+          ],
+          "variants": [
+            "ELS-NX9",
+            "ELS-N04",
+            "ELS-AN00"
+          ],
+          "androidVersions": [
+            "Android 10（出厂，EMUI）"
+          ],
+          "soc": "HiSilicon Kirin 990 5G",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei P40 Pro 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-mate9",
+          "name": "Huawei Mate 9",
+          "codenames": [
+            "manhattan",
+            "mha"
+          ],
+          "variants": [
+            "MHA-L09",
+            "MHA-L29",
+            "MHA-AL00"
+          ],
+          "androidVersions": [
+            "Android 7.0（出厂）",
+            "Android 8.0",
+            "Android 9"
+          ],
+          "soc": "HiSilicon Kirin 960",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei Mate 9 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-mate10-pro",
+          "name": "Huawei Mate 10 Pro",
+          "codenames": [
+            "blanc",
+            "bla"
+          ],
+          "variants": [
+            "BLA-L09",
+            "BLA-L29",
+            "BLA-AL00"
+          ],
+          "androidVersions": [
+            "Android 8.0（出厂）",
+            "Android 9",
+            "Android 10"
+          ],
+          "soc": "HiSilicon Kirin 970",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei Mate 10 Pro 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-mate20",
+          "name": "Huawei Mate 20",
+          "codenames": [
+            "hima",
+            "hma"
+          ],
+          "variants": [
+            "HMA-L09",
+            "HMA-L29",
+            "HMA-AL00"
+          ],
+          "androidVersions": [
+            "Android 9（出厂）",
+            "Android 10"
+          ],
+          "soc": "HiSilicon Kirin 980",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei Mate 20 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-mate20-pro",
+          "name": "Huawei Mate 20 Pro",
+          "codenames": [
+            "laya",
+            "lya"
+          ],
+          "variants": [
+            "LYA-L09",
+            "LYA-L29",
+            "LYA-AL00"
+          ],
+          "androidVersions": [
+            "Android 9（出厂）",
+            "Android 10"
+          ],
+          "soc": "HiSilicon Kirin 980",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei Mate 20 Pro 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-mate40-pro",
+          "name": "Huawei Mate 40 Pro",
+          "codenames": [
+            "noah",
+            "noh"
+          ],
+          "variants": [
+            "NOH-NX9",
+            "NOH-NX9L",
+            "NOH-AN00"
+          ],
+          "androidVersions": [
+            "Android 10（出厂，EMUI）"
+          ],
+          "soc": "HiSilicon Kirin 9000",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei Mate 40 Pro 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-nova3",
+          "name": "Huawei nova 3",
+          "codenames": [
+            "paris",
+            "par"
+          ],
+          "variants": [
+            "PAR-LX1",
+            "PAR-LX9",
+            "PAR-AL00"
+          ],
+          "androidVersions": [
+            "Android 8.1（出厂）",
+            "Android 9"
+          ],
+          "soc": "HiSilicon Kirin 970",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei nova 3 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
+        },
+        {
+          "id": "huawei-nova5t",
+          "name": "Huawei nova 5T",
+          "codenames": [
+            "yale",
+            "yal"
+          ],
+          "variants": [
+            "YAL-L21",
+            "YAL-L61",
+            "YAL-L71"
+          ],
+          "androidVersions": [
+            "Android 9（出厂）",
+            "Android 10"
+          ],
+          "soc": "HiSilicon Kirin 980",
+          "bootloader": {
+            "availability": "unavailable",
+            "dataWipe": true,
+            "notes": "Huawei 当前不提供面向这些机型的公开 bootloader 解锁码申请入口；若设备仍为锁定状态，应停止，不得购买代码、利用漏洞、测试点或授权账户绕过。"
+          },
+          "root": {
+            "status": "blocked",
+            "method": "仅限已经通过合法官方路径解锁的存量设备研究；必须先确认该精确型号与构建的启动镜像/ramdisk 布局，锁定设备不得执行",
+            "summary": "本条目不提供解锁绕过。华为不同 EMUI、地区版和年代的启动分区差异较大；没有既有合法解锁状态、精确固件与可恢复证据时保持 blocked。"
+          },
+          "prerequisites": [
+            "仅操作本人合法拥有或已获明确授权的设备；不得用于绕过 Huawei ID、FRP、MDM、运营商限制或其他安全控制。",
+            "从设置/关于手机、adb 属性与 fastboot 界面交叉核对 Huawei nova 5T 的完整型号、地区、EMUI/Android 版本和当前构建。",
+            "先确认设备是否已经通过历史上的合法官方路径解锁；锁定设备立即停止，不尝试付费代码、漏洞、测试点、维修授权账户或降级绕过。",
+            "离线备份用户数据、双重验证恢复码和关键文件；准备与精确型号、地区和构建匹配的完整原厂恢复包。",
+            "仅从 OEM 官方支持页或项目原始发布页取得资料与工具；第三方固件站内容不得作为唯一恢复依据。"
+          ],
+          "steps": [
+            {
+              "id": "scope-and-backup",
+              "title": "确认授权、既有解锁状态并备份",
+              "description": "记录所有权/授权、型号、构建号、bootloader 当前状态与备份位置；本指南不提供任何解锁码获取或安全控制绕过。",
+              "risk": "low"
+            },
+            {
+              "id": "identify-exact-variant",
+              "title": "核对精确型号、地区与构建",
+              "description": "读取产品代号、型号和构建指纹，并与设备 fastboot 界面及原厂恢复资料交叉核对；同名设备的地区版和分区布局可能不同。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.product.device",
+                "adb shell getprop ro.product.model",
+                "adb shell getprop ro.build.fingerprint",
+                "adb reboot bootloader",
+                "fastboot devices",
+                "fastboot getvar product"
+              ],
+              "risk": "medium"
+            },
+            {
+              "id": "stop-if-locked",
+              "title": "锁定状态下停止",
+              "description": "如果 bootloader 仍锁定、状态不明确或没有原厂可恢复路径，停止研究。不得通过付费解锁码、漏洞、测试点、降级或维修授权账户绕过限制。",
+              "risk": "critical"
+            },
+            {
+              "id": "research-partition-layout",
+              "title": "仅对已合法解锁设备研究分区布局",
+              "description": "仅在设备已合法解锁时，依据精确型号、EMUI/Android 版本和构建的可靠文档确认启动链、ramdisk 所在位置以及应使用 boot、recovery_ramdisk 或其他镜像中的哪一个；不得猜测目标分区，不得使用他人预修补镜像。",
+              "risk": "critical"
+            },
+            {
+              "id": "preserve-recovery",
+              "title": "保留完整恢复证据",
+              "description": "在任何写入前记录原厂包来源、文件哈希和回退条件。本条目状态为 blocked，RootDesk 不提供可直接执行的写入步骤。",
+              "risk": "critical"
+            },
+            {
+              "id": "post-check",
+              "title": "研究后核对设备状态",
+              "description": "若仅进行只读识别，确认设备仍可正常启动、联网和更新；保留全部审计记录。不要隐藏 root 以规避组织安全策略。",
+              "commands": [
+                "adb devices",
+                "adb shell getprop ro.build.fingerprint"
+              ],
+              "risk": "medium"
+            }
+          ],
+          "rollback": [
+            "若设备仍锁定或尚未写入，停止并保留原状态。",
+            "不承诺 HiSuite、eRecovery 或降级一定可恢复；只使用与精确型号、地区、构建和反回滚状态匹配的官方恢复路径。",
+            "无法证明恢复包和分区目标完全匹配时不得写入，也不得尝试重新锁定。",
+            "恢复后核对启动、加密、无线连接、相机和更新状态，再从可信备份恢复个人数据。"
+          ],
+          "tools": [
+            "android-platform-tools",
+            "magisk"
+          ],
+          "sources": [
+            {
+              "title": "Huawei consumer support",
+              "url": "https://consumer.huawei.com/en/support/",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "AOSP Bootloader locking and unlocking",
+              "url": "https://source.android.com/docs/core/architecture/bootloader/locking_unlocking",
+              "kind": "official",
+              "verifiedAt": null
+            },
+            {
+              "title": "Magisk installation documentation",
+              "url": "https://topjohnwu.github.io/Magisk/install.html",
+              "kind": "project",
+              "verifiedAt": null
+            }
+          ],
+          "warning": "Huawei 当前不提供公开 bootloader 解锁码申请入口，本条目不包含任何绕过方案。错误分区、跨地区固件、反回滚或盲目降级可能造成永久损坏；EMUI/Android 版本仅为已收录样例，HarmonyOS NEXT 等非 Android 机型不在本目录范围内。"
         }
       ]
     },

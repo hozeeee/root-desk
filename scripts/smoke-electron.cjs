@@ -40,7 +40,7 @@ app.on('browser-window-created', (_event, window) => {
           rejectsUnboundCommand: !preview.allowed, searchResults: search.length
         }
       })()`)
-      if (!result.bridge || result.node !== 'undefined' || result.generalInvoke !== 'undefined' || result.issues.length || result.brands !== 8 || result.devices !== 30 || !result.toolDetails || result.expertMode || !result.rejectsUnboundCommand || !result.searchResults) throw new Error(JSON.stringify(result))
+      if (!result.bridge || result.node !== 'undefined' || result.generalInvoke !== 'undefined' || result.issues.length || result.brands !== 9 || result.devices !== 63 || !result.toolDetails || result.expertMode || !result.rejectsUnboundCommand || !result.searchResults) throw new Error(JSON.stringify(result))
       const pages = []
       for (let index = 0; index < expectedPages.length; index++) {
         const title = await window.webContents.executeJavaScript(`(async () => {
