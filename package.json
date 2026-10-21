@@ -18,8 +18,8 @@
     "test": "vitest run",
     "smoke": "electron scripts/smoke-electron.cjs",
     "lint": "npm run typecheck",
-    "package:mac": "npm run build && electron-builder --mac",
-    "package:win": "npm run build && electron-builder --win"
+    "package:mac": "npm run build && electron-builder --mac --publish never",
+    "package:win": "npm run build && electron-builder --win --publish never"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

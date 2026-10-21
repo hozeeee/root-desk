@@ -1,7 +1,7 @@
 appId: com.rootdesk.app
 productName: RootDesk
 directories:
-  buildResources: build
+  buildResources: resources/icons
   output: release
 files:
   - out/**
@@ -11,14 +11,22 @@ extraResources:
     to: seed-content
     filter:
       - "**/*"
+  - from: resources/icons/icon.png
+    to: icons/icon.png
 mac:
+  icon: resources/icons/icon.icns
   target:
     - dmg
     - zip
 win:
+  icon: resources/icons/icon.ico
   target:
     - nsis
     - portable
+linux:
+  icon: resources/icons/icon.png
 nsis:
+  installerIcon: resources/icons/icon.ico
+  uninstallerIcon: resources/icons/icon.ico
   oneClick: false
   allowToChangeInstallationDirectory: true

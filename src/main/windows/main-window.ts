@@ -1,15 +1,20 @@
 import { join } from 'node:path'
-import { BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, nativeImage, shell } from 'electron'
 import { hardenWindow } from '@main/security/hardening'
 import { isSafeRemoteUrl } from '@main/security/validation'
 
 export function createMainWindow(): BrowserWindow {
+  const resources = app.isPackaged ? process.resourcesPath : join(app.getAppPath(), 'resources')
+  const icon = nativeImage.createFromPath(join(resources, 'icons', 'icon.png'))
+  if (process.platform === 'darwin' && !app.isPackaged) app.dock?.setIcon(icon)
+
   const window = new BrowserWindow({
     width: 1440,
     height: 900,
     minWidth: 980,
     minHeight: 680,
     title: 'RootDesk',
+    icon,
     backgroundColor: '#0b0e13',
     show: false,
     titleBarStyle: 'default',
