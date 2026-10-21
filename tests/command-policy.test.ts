@@ -1,11 +1,12 @@
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { afterAll, describe, expect, it } from 'vitest'
 import { previewCommand, confirmationFor, isRiskCommand } from '@main/security/command-policy'
 import type { CommandDefinition } from '@shared/schemas'
 import type { CommandRequest } from '@shared/contracts'
 
-const root = mkdtempSync('/Users/fanhaozhi/Desktop/root-desk/tests/.command-policy-')
+const root = mkdtempSync(join(dirname(fileURLToPath(import.meta.url)), '.command-policy-'))
 const image = join(root, 'boot image.img')
 writeFileSync(image, 'mock image')
 afterAll(() => rmSync(root, { recursive: true, force: true }))

@@ -1,7 +1,8 @@
 import { EventEmitter } from 'node:events'
 import { PassThrough } from 'node:stream'
 import { mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ContentService } from '@main/services/content-service'
 import type { SettingsService } from '@main/services/settings-service'
@@ -46,7 +47,7 @@ function fixture() {
 }
 
 beforeEach(() => {
-  root = mkdtempSync('/Users/fanhaozhi/Desktop/root-desk/tests/.command-service-')
+  root = mkdtempSync(join(dirname(fileURLToPath(import.meta.url)), '.command-service-'))
   children = []; services = []
   getPath.mockReturnValue(root); spawn.mockReset(); spawn.mockImplementation(() => child())
 })

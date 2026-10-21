@@ -1,7 +1,8 @@
 import { EventEmitter } from 'node:events'
 import { PassThrough } from 'node:stream'
 import { mkdtempSync, mkdirSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApkService } from '@main/services/apk-service'
 import { CommandService } from '@main/services/command-service'
@@ -31,7 +32,7 @@ function fixture() {
   return { apk, filePath, state, tools, input }
 }
 beforeEach(() => {
-  root = mkdtempSync('/Users/fanhaozhi/Desktop/root-desk/tests/.command-apk-'); children = []
+  root = mkdtempSync(join(dirname(fileURLToPath(import.meta.url)), '.command-apk-')); children = []
   getPath.mockReturnValue(root); showOpenDialog.mockReset(); spawn.mockReset()
   spawn.mockImplementation(() => {
     const process = Object.assign(new EventEmitter(), { stdout: new PassThrough(), stderr: new PassThrough(), kill: vi.fn(() => true) })

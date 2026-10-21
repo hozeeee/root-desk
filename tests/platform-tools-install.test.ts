@@ -28,7 +28,7 @@ beforeEach(async () => {
     queueMicrotask(() => { child.stdout.emit('data', Buffer.from(binary.includes('fastboot') ? 'fastboot version 37.0.0-123\n' : 'Android Debug Bridge version 1.0.41\nVersion 37.0.0-123\n')); child.emit('close', 0) })
     return child
   })
-  fetchMock.mockImplementation(async () => new Response(officialZip()))
+  fetchMock.mockImplementation(async () => new Response(officialZip(process.platform === 'win32')))
 })
 afterEach(async () => { Object.defineProperty(process, 'platform', { value: platform }); await cleanupFixture() })
 it.each(['darwin', 'win32'])('installs and verifies %s official tools into a fresh cache path without overwriting an old install', async (os) => {
