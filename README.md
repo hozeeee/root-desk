@@ -6,6 +6,39 @@ RootDesk 是面向 Windows 与 macOS 的 Android 解锁 / Root 知识库与安�
 
 > 资料为整理与研究用途，**不代表逐型号实机验证**。所有设备状态为 `community` / `research-needed` / `blocked`，`sources.verifiedAt` 均为 `null`，待维护者实机核验后再填写。
 
+## 安装
+
+### macOS 安装与首次启动
+
+- Apple 芯片（M1、M2、M3 等）选择 `arm64.dmg`，Intel 芯片选择 `x64.dmg`。可在“关于本机”中查看芯片类型。
+- 打开 DMG，将 **RootDesk** 拖入“应用程序”，再从“应用程序”中启动。
+- `.blockmap` 和 `.yml` 是自动更新辅助文件，不需要手动下载。
+
+macOS 安装包目前没有签名。首次打开时如果提示“RootDesk 已损坏，无法打开”或“无法验证开发者”，通常是 macOS 安全检查拦截，不一定是文件真的损坏。
+
+**仅在确认安装包来自本项目官方 GitHub Release 且信任该来源时**，可以先通过系统设置允许打开：
+
+1. 将 `RootDesk.app` 拖入“应用程序”文件夹。
+2. 打开一次，出现安全拦截提示后点击“取消”。
+3. 进入“系统设置 → 隐私与安全性”，找到 RootDesk 的拦截提示，点击“仍要打开”，按提示确认。
+
+如果没有“仍要打开”选项，或仍被安全检查拦截，可打开 Mac 的“终端”，执行：
+
+```bash
+xattr -r -d com.apple.quarantine "/Applications/RootDesk.app"
+```
+
+然后重新打开应用。此命令仅移除该应用及其内部文件的下载隔离标记，会绕过针对它的部分安全检查，不会关闭系统整体防护。不要对来源不明的应用执行此操作，也不要全局关闭 Gatekeeper。
+
+如果仍然无法打开，可执行以下只读诊断命令，并在反馈问题时附上命令输出及 macOS 版本：
+
+```bash
+codesign --verify --deep --strict --verbose=2 "/Applications/RootDesk.app"
+spctl --assess --type execute --verbose=4 "/Applications/RootDesk.app"
+```
+
+> 以上命令假定应用安装在 `/Applications/RootDesk.app`；如果安装位置不同，请替换为实际路径。移除隔离标记不能修复真正的文件损坏或签名问题。没有签名时，macOS 上的自动更新不保证可用。
+
 ## 开发
 
 要求 Node.js 22.12+（CI 使用 Node 24）、npm 10+。
