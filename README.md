@@ -61,7 +61,7 @@ npm run test:services # 仅网络 / 下载 / 更新 / 代理 / 平台工具服�
 npm run test:tools    # 可选：真实下载并安装官方 Platform Tools 到临时目录（需联网）
 ```
 
-打包：`npm run package:mac`、`npm run package:win`（electron-builder，`seed-content` 作为 extraResources 随包分发）。CI 见 `.github/workflows/ci.yml`（macOS + Windows 矩阵：typecheck、test、build、macOS smoke、未签名打包）。
+打包：`npm run package:mac`、`npm run package:win`（electron-builder，`seed-content` 作为 extraResources 随包分发）。CI 见 `.github/workflows/ci.yml`（macOS + Windows 矩阵：typecheck、test、build、macOS smoke、未签名打包）。推送与 `package.json` 版本一致的 `v<version>` tag（例如 `v0.1.0`）后，CI 会在全部平台打包成功时自动创建 GitHub Release，并上传 `.dmg`、`.zip`、`.exe` 安装包。
 
 ## 目录结构
 
